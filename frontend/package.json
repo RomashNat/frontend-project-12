@@ -12,10 +12,21 @@
     "lint:fix": "eslint src/ --fix"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.9.2",
+    "axios": "^1.13.0",
+    "bootstrap": "^5.3.8",
+    "classnames": "^2.5.1",
+    "date-fns": "^4.1.0",
     "formik": "^2.4.6",
+    "js-cookie": "^3.0.5",
     "react": "^19.1.1",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.4"
+    "react-hook-form": "^7.65.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.9.4",
+    "socket.io-client": "^4.8.1",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",

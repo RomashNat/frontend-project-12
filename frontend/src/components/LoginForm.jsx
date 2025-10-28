@@ -1,75 +1,135 @@
-import React from 'react'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import React from 'react';
+import { Container, Row, Col, Card, Button, Form, Alert } from 'react-bootstrap';
+import { Formik } from 'formik';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../slices/authSlice';
+import socket from '../socket';
 
 const LoginForm = () => {
-  const initialValues = {
-    username: '',
-    password: '',
-  }
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const validateForm = (values) => {
-    const errors = {}
+  const handleSubmit = async (values, { setSubmitting, setStatus }) => {
+    try {
+      // Отправка данных для авторизации
+      const response = await fetch('/api/v1/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
 
-    if (!values.username) {
-      errors.username = 'Обязательное поле'
-    } else if (values.username.length < 3) {
-      errors.username = 'Имя пользователя должно содержать минимум 3 символа'
+      if (!response.ok) {
+        throw new Error('Ошибка авторизации');
+      }
+
+      const data = await response.json();
+
+      // Сохраняем данные
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', values.username);
+
+      // Обновляем токен в socket и подключаемся
+      socket.auth.token = data.token;
+      socket.connect();
+
+      // Диспатчим успешную авторизацию
+      dispatch(login({
+        token: data.token,
+        username: values.username,
+      }));
+
+      // Редирект на чат
+      navigate('/chat');
+
+    } catch (error) {
+      setStatus({ error: error.message });
+    } finally {
+      setSubmitting(false);
     }
-
-    if (!values.password) {
-      errors.password = 'Обязательное поле'
-    } else if (values.password.length < 6) {
-      errors.password = 'Пароль должен содержать минимум 6 символов'
-    }
-
-    return errors
-  }
-
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log('Форма отправлена:', values)
-    setSubmitting(false)
-  }
+  };
 
   return (
-    <div className="login-form">
-      <h1>Вход в чат</h1>
-      <Formik
-        initialValues={initialValues}
-        validate={validateForm}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <div className="form-group">
-              <label htmlFor="username">Имя пользователя:</label>
-              <Field
-                type="text"
-                id="username"
-                name="username"
-                placeholder="Введите имя пользователя"
-              />
-              <ErrorMessage name="username" component="div" className="error" />
-            </div>
+    <Container fluid className="d-flex justify-content-center align-items-center min-vh-100">
+      <Row>
+        <Col>
+          <Card style={{ width: '400px' }}>
+            <Card.Body>
+              <Card.Title className="text-center mb-4">Вход в чат</Card.Title>
+              
+              <Formik
+                initialValues={{ username: '', password: '' }}
+                onSubmit={handleSubmit}
+              >
+                {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  isSubmitting,
+                  status
+                }) => (
+                  <Form onSubmit={handleSubmit}>
+                    {/* Показ ошибок */}
+                    {status?.error && (
+                      <Alert variant="danger" className="mb-3">
+                        {status.error}
+                      </Alert>
+                    )}
 
-            <div className="form-group">
-              <label htmlFor="password">Пароль:</label>
-              <Field
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Введите пароль"
-              />
-              <ErrorMessage name="password" component="div" className="error" />
-            </div>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Имя пользователя</Form.Label>
+                      <Form.Control 
+                        type="text" 
+                        name="username"
+                        placeholder="Введите имя пользователя"
+                        value={values.username}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.username && errors.username}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.username}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    
+                    <Form.Group className="mb-3">
+                      <Form.Label>Пароль</Form.Label>
+                      <Form.Control 
+                        type="password" 
+                        name="password"
+                        placeholder="Введите пароль"
+                        value={values.password}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.password && errors.password}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.password}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    
+                    <Button 
+                      variant="primary" 
+                      type="submit" 
+                      className="w-100"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Вход...' : 'Войти'}
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
 
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Вход...' : 'Войти'}
-            </button>
-          </Form>
-        )}
-      </Formik>
-    </div>
-  )
-}
-
-export default LoginForm
+export default LoginForm;
