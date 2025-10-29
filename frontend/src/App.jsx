@@ -1,19 +1,25 @@
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import ChatPage from './pages/ChatPage';
-import LoginPage from './pages/LoginPage';
-import NotFoundPage from './pages/NotFoundPage';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './store.js';
+import LoginPage from './pages/LoginPage.jsx';
+import ChatPage from './pages/ChatPage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<ChatPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
-  )
-}
+const App = () => (
+  <Provider store={store}>
+    <Router>
+      <div className="h-100">
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<ChatPage />} />
+          <Route path="/404" element={<NotFoundPage />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
+        </Routes>
+      </div>
+    </Router>
+  </Provider>
+);
 
 export default App;
