@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -6,14 +7,14 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </div>
-  );
+    </BrowserRouter>
+  )
 }
 
 export default App;
