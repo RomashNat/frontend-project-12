@@ -1,0 +1,170 @@
+import { useState } from 'react';
+import * as Yup from 'yup';
+import axios from 'axios';
+import { Formik, Form, Field } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Button, Alert } from 'react-bootstrap';
+import routes from '../routes';
+import { signUp } from '../slices/authSlice';
+
+const RegistrationForm = () => {
+  console.log('отрисовка RegistrationForm');
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [isUsernameTaken, setUsernameTaken] = useState(false);
+  const [serverError, setServerError] = useState('');
+
+  const validationSchema = Yup.object().shape({
+    username: Yup.string()
+      .trim()
+      .required('Обязательное поле')
+      .min(3, 'От 3 до 20 символов')
+      .max(20, 'От 3 до 20 символов')
+      .matches(/^[a-zA-Z0-9_]+$/, 'Только латинские буквы, цифры и подчеркивание'),
+    password: Yup.string()
+      .trim()
+      .required('Обязательное поле')
+      .min(6, 'Не менее 6 символов')
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву и одну цифру'
+      ),
+    confirmPassword: Yup.string()
+      .trim()
+      .required('Обязательное поле')
+      .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
+  });
+
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    setSubmitting(true);
+    setUsernameTaken(false);
+    setServerError('');
+
+    const { username, password } = values;
+    
+    try {
+      const response = await axios.post(routes.signupPath(), { 
+        username: username.trim(), 
+        password 
+      });
+      
+      dispatch(signUp(response.data));
+      resetForm();
+      navigate('/');
+    } catch (error) {
+      if (error.response?.status === 409) {
+        setUsernameTaken(true);
+      } else if (error.response?.status === 400) {
+        setServerError('Некорректные данные для регистрации');
+      } else if (error.response?.status === 500) {
+        setServerError('Ошибка сервера. Попробуйте позже');
+      } else {
+        setServerError('Произошла ошибка при регистрации');
+      }
+      console.error('Registration error:', error.message);
+    }
+
+    setSubmitting(false);
+  };
+
+  return (
+    <Formik
+      initialValues={{ 
+        username: '', 
+        password: '', 
+        confirmPassword: '' 
+      }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+      validateOnChange={false}
+      validateOnBlur={false}
+    >
+      {({ errors, touched, isSubmitting, handleBlur, handleChange }) => (
+        <Form className="w-50 mx-auto">
+          <h1 className="text-center mb-4">Регистрация</h1>
+
+          {serverError && (
+            <Alert variant="danger" className="mb-3">
+              {serverError}
+            </Alert>
+          )}
+
+          <div className="form-floating mb-3">
+            <Field
+              type="text"
+              name="username"
+              autoComplete="username"
+              required
+              placeholder="От 3 до 20 символов"
+              id="username"
+              className={`form-control ${
+                (errors.username && touched.username) || isUsernameTaken ? 'is-invalid' : ''
+              }`}
+              onBlur={(e) => {
+                handleBlur(e);
+                setUsernameTaken(false);
+              }}
+            />
+            <label htmlFor="username">Имя пользователя</label>
+            <div className="invalid-feedback">
+              {isUsernameTaken 
+                ? 'Такой пользователь уже существует' 
+                : errors.username || ''
+              }
+            </div>
+          </div>
+
+          <div className="form-floating mb-3">
+            <Field
+              type="password"
+              name="password"
+              autoComplete="new-password"
+              required
+              placeholder="Не менее 6 символов"
+              id="password"
+              className={`form-control ${
+                errors.password && touched.password ? 'is-invalid' : ''
+              }`}
+            />
+            <label htmlFor="password">Пароль</label>
+            <div className="invalid-feedback">
+              {errors.password || ''}
+            </div>
+          </div>
+
+          <div className="form-floating mb-4">
+            <Field
+              type="password"
+              name="confirmPassword"
+              autoComplete="new-password"
+              required
+              placeholder="Пароли должны совпадать"
+              id="confirmPassword"
+              className={`form-control ${
+                errors.confirmPassword && touched.confirmPassword ? 'is-invalid' : ''
+              }`}
+            />
+            <label htmlFor="confirmPassword">Подтвердите пароль</label>
+            <div className="invalid-feedback">
+              {errors.confirmPassword || ''}
+            </div>
+          </div>
+
+          <Button 
+            type="submit" 
+            variant="primary" 
+            className="w-100 mb-3"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
+          </Button>
+        </Form>
+      )}
+    </Formik>
+  );
+};
+
+export default RegistrationForm;

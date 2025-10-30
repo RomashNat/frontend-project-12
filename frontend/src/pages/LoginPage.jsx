@@ -1,5 +1,7 @@
 import LoginForm from '../components/LoginForm.jsx'
 import { Row, Col, Card, Nav } from 'react-bootstrap'
+import { Link } from 'react-router-dom';
+
 
 const LoginPage = () => (
   <div className="h-100 d-flex flex-column">
@@ -27,7 +29,7 @@ const LoginPage = () => (
           <Card.Footer className="p-4 d-flex align-items-center justify-content-center">
             <div className="text-center">
               <span>Нет аккаунта? </span>
-              <a href="#">Регистрация</a>
+              <Link to="/signup">Регистрация</Link>
             </div>
           </Card.Footer>
         </Card>

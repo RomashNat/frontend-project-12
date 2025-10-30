@@ -5,6 +5,7 @@ import store from './store.js';
 import LoginPage from './pages/LoginPage.jsx';
 import ChatPage from './pages/ChatPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import RegistrationPage from './pages/RegistrationPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => (
@@ -13,6 +14,7 @@ const App = () => (
       <div className="h-100">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<RegistrationPage />} />
           <Route path="/" element={<ChatPage />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
