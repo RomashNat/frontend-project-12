@@ -21,7 +21,8 @@ const ChatPage = () => {
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState(null);
 
- const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+ 
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const { channels, currentChannelId } = useSelector(state => state.channels);
   const { messages } = useSelector(state => state.messages);
 
