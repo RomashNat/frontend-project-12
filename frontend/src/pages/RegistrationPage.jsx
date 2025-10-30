@@ -1,6 +1,6 @@
 import RegistrationForm from '../components/RegistrationForm.jsx'
 import { Row, Col, Card, Nav } from 'react-bootstrap'
-import { Link } from 'react-router-dom';
+
 
 const RegistrationPage = () => (
     <div className="h-100 d-flex flex-column">

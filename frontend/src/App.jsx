@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store.js';
@@ -7,6 +6,7 @@ import ChatPage from './pages/ChatPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import RegistrationPage from './pages/RegistrationPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => (
   <Provider store={store}>
@@ -15,7 +15,8 @@ const App = () => (
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<RegistrationPage />} />
-          <Route path="/" element={<ChatPage />} />
+          <Route path="/" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>

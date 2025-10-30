@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
 
-const socket = io('', {
+const socket = io('http://localhost:5001', {
   path: '/socket.io',
   autoConnect: false,
   auth: {
