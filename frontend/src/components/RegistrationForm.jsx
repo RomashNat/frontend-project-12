@@ -6,11 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Button, Alert } from 'react-bootstrap';
 import routes from '../routes';
-import { signUp } from '../slices/authSlice';
+import { signup } from '../slices/authSlice';
 
 const RegistrationForm = () => {
-  
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -22,16 +20,16 @@ const RegistrationForm = () => {
       .trim()
       .required('Обязательное поле')
       .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов'),
-    //   .matches(/^[a-zA-Z0-9_]+$/, 'Только латинские буквы, цифры и подчеркивание'),
+      .max(20, 'От 3 до 20 символов')
+      .matches(/^[a-zA-Z0-9_]+$/, 'Только латинские буквы, цифры и подчеркивание'),
     password: Yup.string()
       .trim()
       .required('Обязательное поле')
-      .min(6, 'Не менее 6 символов'),
-    //   .matches(
-    //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-    //     'Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву и одну цифру'
-    //   ),
+      .min(6, 'Не менее 6 символов')
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву и одну цифру'
+      ),
     confirmPassword: Yup.string()
       .trim()
       .required('Обязательное поле')
@@ -51,7 +49,7 @@ const RegistrationForm = () => {
         password 
       });
       
-      dispatch(signUp(response.data));
+      dispatch(signup(response.data));
       resetForm();
       navigate('/');
     } catch (error) {

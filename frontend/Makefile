@@ -18,3 +18,6 @@ localStart:
 
 vite:
 	npx vite preview --port 3000
+
+server:
+	npx start-server -s ./frontend/dist

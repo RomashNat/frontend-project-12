@@ -1,6 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { I18nextProvider } from 'react-i18next';
 import store from './store.js';
+import i18n from './locales/i18n.js';
 import LoginPage from './pages/LoginPage.jsx';
 import ChatPage from './pages/ChatPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
@@ -10,8 +12,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => (
   <Provider store={store}>
-    <Router>
-      <div className="h-100">
+    <I18nextProvider i18n={i18n}>
+      <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<RegistrationPage />} />
@@ -20,8 +22,8 @@ const App = () => (
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
-      </div>
-    </Router>
+      </BrowserRouter>
+    </I18nextProvider>
   </Provider>
 );
 
