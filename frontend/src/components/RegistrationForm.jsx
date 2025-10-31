@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Alert } from 'react-bootstrap';
-import routes from '../routes';
 import { signup } from '../slices/authSlice';
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { loading, error } = useSelector(state => state.auth);
 
   const [isUsernameTaken, setUsernameTaken] = useState(false);
   const [serverError, setServerError] = useState('');
@@ -44,25 +43,28 @@ const RegistrationForm = () => {
     const { username, password } = values;
     
     try {
-      const response = await axios.post(routes.signupPath(), { 
+      // Используем dispatch для регистрации
+      const result = await dispatch(signup({
         username: username.trim(), 
         password 
-      });
+      })).unwrap();
       
-      dispatch(signup(response.data));
-      resetForm();
-      navigate('/');
+      // Если регистрация успешна - редирект на чат
+      if (result) {
+        resetForm();
+        navigate('/');
+      }
     } catch (error) {
-      if (error.response?.status === 409) {
+      if (error?.status === 409) {
         setUsernameTaken(true);
-      } else if (error.response?.status === 400) {
+      } else if (error?.status === 400) {
         setServerError('Некорректные данные для регистрации');
-      } else if (error.response?.status === 500) {
+      } else if (error?.status === 500) {
         setServerError('Ошибка сервера. Попробуйте позже');
       } else {
         setServerError('Произошла ошибка при регистрации');
       }
-      console.error('Registration error:', error.message);
+      console.error('Registration error:', error);
     }
 
     setSubmitting(false);
@@ -155,9 +157,9 @@ const RegistrationForm = () => {
             type="submit" 
             variant="primary" 
             className="w-100 mb-3"
-            disabled={isSubmitting}
+            disabled={isSubmitting || loading}
           >
-            {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
+            {(isSubmitting || loading) ? 'Регистрация...' : 'Зарегистрироваться'}
           </Button>
         </Form>
       )}

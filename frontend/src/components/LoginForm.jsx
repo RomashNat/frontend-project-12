@@ -1,16 +1,13 @@
 import { Formik, Form, Field } from 'formik';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import routes from '../routes';
-import { useDispatch } from 'react-redux';
-import { login } from '../slices/authSlice.jsx';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Alert } from 'react-bootstrap';
-import socket from '../socket';
+import { login } from '../slices/authSlice.jsx';
 
 const LoginForm = () => {
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { loading, error } = useSelector(state => state.auth);
 
   // Функция валидации для проверки полей
   const validate = (values) => {
@@ -33,29 +30,22 @@ const LoginForm = () => {
 
   const handleSubmit = async (values, { setSubmitting, setStatus, setErrors }) => {
     setSubmitting(true);
+    setStatus(null);
+    
     try {
-      const response = await axios.post(routes.loginPath(), values);
-      const userData = response.data;
+      // Используем dispatch для логина
+      const result = await dispatch(login({
+        username: values.username.trim(),
+        password: values.password
+      })).unwrap();
 
-      // Сохраняем данные
-      localStorage.setItem('token', userData.token);
-      localStorage.setItem('username', values.username);
-
-      // Обновляем токен в socket и подключаемся
-      socket.auth.token = userData.token;
-      socket.connect();
-
-      // Диспатчим успешную авторизацию
-      dispatch(login(userData));
-      
-      setStatus(null); // Очищаем ошибки
-      navigate('/');
-
+      // Если логин успешен - редирект на чат
+      if (result) {
+        navigate('/');
+      }
     } catch (error) {
-      console.log(error.message);
-      
       // Обработка ошибок авторизации
-      if (error.response && error.response.status === 401) {
+      if (error?.status === 401) {
         setStatus({ error: 'Неверные имя пользователя или пароль' });
         // Также можно подсветить поля
         setErrors({
@@ -131,9 +121,9 @@ const LoginForm = () => {
                 type='submit' 
                 variant='outline-primary' 
                 className="w-100 mb-3" 
-                disabled={isSubmitting}
+                disabled={isSubmitting || loading}
               >
-                {isSubmitting ? 'Вход...' : 'Войти'}
+                {(isSubmitting || loading) ? 'Вход...' : 'Войти'}
               </Button>
             </Form>
           )}
