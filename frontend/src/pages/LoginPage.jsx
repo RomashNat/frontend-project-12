@@ -34,7 +34,7 @@ const LoginPage = () => {
             <Card.Footer className="p-4 d-flex align-items-center justify-content-center">
               <div className="text-center">
                 <span>{t('loginPage.noSignUpWithLink')} </span>
-                <Link to="/signup">{t('loginPage.submit')}</Link>
+                <Link to="/signup">{t('signup.submit')}</Link>
               </div>
             </Card.Footer>
           </Card>
