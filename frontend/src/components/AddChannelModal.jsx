@@ -2,12 +2,16 @@ import { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { createChannel } from '../slices/channelSlice.jsx';
+import { useTranslation } from 'react-i18next';
+import { showError } from '../utils/notifications.js';
+import { hasProfanity } from '../utils/wordsfilter.js';
 
 const AddChannelModal = ({ show, onHide }) => {
   const [channelName, setChannelName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const { channels } = useSelector(state => state.channels);
+    const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,12 +25,17 @@ const AddChannelModal = ({ show, onHide }) => {
     );
 
     if (!isNameUnique) {
-      alert('Канал с таким именем уже существует');
+      showError(t('modal.error.notOneOf'));
       return;
     }
 
     if (name.length < 3 || name.length > 20) {
       alert('Название канала должно быть от 3 до 20 символов');
+      return;
+    }
+
+      if (hasProfanity(name)) {
+      showError(t('modal.error.profanity'));
       return;
     }
 
@@ -52,7 +61,7 @@ const AddChannelModal = ({ show, onHide }) => {
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Добавить канал</Modal.Title>
+        <Modal.Title>{t('modal.addChannel.title')}</Modal.Title>
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
@@ -61,7 +70,7 @@ const AddChannelModal = ({ show, onHide }) => {
               type="text"
               value={channelName}
               onChange={(e) => setChannelName(e.target.value)}
-              placeholder=""
+              placeholder={t('modal.addChannel.placeholder')}
               required
               minLength={3}
               maxLength={20}
@@ -71,10 +80,10 @@ const AddChannelModal = ({ show, onHide }) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose} disabled={isSubmitting}>
-            Отмена
+             {t('modal.cancelBtn')}
           </Button>
           <Button variant="primary" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Создание' : 'Создать'}
+            {isSubmitting ? t('modal.confirmBtn') : t('modal.addChannel.createBtn')}
           </Button>
         </Modal.Footer>
       </Form>

@@ -1,52 +1,94 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import routes from '../routes';
+import routes from '../routes.js';
+import { notify } from '../utils/notifications.js';
 
 export const fetchChannels = createAsyncThunk(
   'channels/fetchChannels',
-  async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(routes.getChannelsPath(), {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(routes.getChannelsPath(), {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data;
+    } catch (error) {
+      if (!navigator.onLine) {
+        notify.networkError();
+      } else {
+        notify.loadError();
+      }
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
+  
+
 
 export const createChannel = createAsyncThunk(
   'channels/createChannel',
-  async (name) => {
-    const token = localStorage.getItem('token');
-    const response = await axios.post(routes.channelsPath(), {
-      name
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
+  async (name, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(routes.channelsPath(), {
+        name
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      notify.channelAdded();
+      return response.data;
+    } catch (error) {
+      if (!navigator.onLine) {
+        notify.networkError();
+      } else {
+        notify.loadError();
+      }
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
 
 export const renameChannel = createAsyncThunk(
   'channels/renameChannel',
-  async ({ id, name }) => {
-    const token = localStorage.getItem('token');
-    const response = await axios.patch(routes.channelPath(id), {
-      name
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
+  async ({ id, name }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.patch(routes.channelPath(id), {
+        name
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      notify.channelRenamed();
+      return response.data;
+    } catch (error) {
+      if (!navigator.onLine) {
+        notify.networkError();
+      } else {
+        notify.loadError();
+      }
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
 
 export const deleteChannel = createAsyncThunk(
   'channels/deleteChannel',
-  async (id) => {
-    const token = localStorage.getItem('token');
-    await axios.delete(routes.channelPath(id), {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return id;
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(routes.channelPath(id), {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      notify.channelRemoved();
+      return id;
+    } catch (error) {
+      if (!navigator.onLine) {
+        notify.networkError();
+      } else {
+        notify.loadError();
+      }
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
 

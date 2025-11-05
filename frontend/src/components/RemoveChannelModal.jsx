@@ -1,12 +1,15 @@
 import { Modal, Button } from 'react-bootstrap';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { deleteChannel } from '../slices/channelSlice.jsx';
+import { showError } from '../utils/notifications.js';
 
 const RemoveChannelModal = ({ show, onHide, channelId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const { channels } = useSelector(state => state.channels);
+  const { t } = useTranslation();
   
   const channel = channels.find(ch => ch.id === channelId);
   const isDefaultChannel = channelId === 1; // general канал нельзя удалять
@@ -21,7 +24,7 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
       onHide();
     } catch (error) {
       console.error('Ошибка удаления канала:', error);
-      alert('Не удалось удалить канал');
+      showError(t('toast.fetchError')); 
     } finally {
       setIsSubmitting(false);
     }
@@ -30,18 +33,18 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Удалить канал</Modal.Title>
+        <Modal.Title>{t('modal.RemoveChannel.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {isDefaultChannel ? (
           <p>Невозможно удалить основной канал #general</p>
         ) : (
-          <p>Уверены, что хотите удалить канал <strong>#{channel?.name}</strong>? Все сообщения будут удалены.</p>
+          <p>{t('modal.removeChannel.body')} <strong>#{channel?.name}</strong>?</p>
         )}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
-          Отмена
+          {t('modal.cancelBtn')}
         </Button>
         {!isDefaultChannel && (
           <Button 
@@ -49,7 +52,7 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
             onClick={handleDelete} 
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Удаление' : 'Удалить'}
+            {isSubmitting ? t('modal.confirmBtn') : t('modal.removeChannel.deleteBtn')}
           </Button>
         )}
       </Modal.Footer>

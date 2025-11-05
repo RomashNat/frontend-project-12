@@ -3,6 +3,8 @@ import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import store from './store.js';
 import i18n from './locales/i18n.js';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import LoginPage from './pages/LoginPage.jsx';
 import ChatPage from './pages/ChatPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
@@ -22,6 +24,18 @@ const App = () => (
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
+          <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </BrowserRouter>
     </I18nextProvider>
   </Provider>

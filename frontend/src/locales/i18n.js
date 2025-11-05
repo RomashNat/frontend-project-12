@@ -9,11 +9,11 @@ const resources = {
         signOut: 'Выйти',
       },
       loginPage: {
-        header: 'Регистрация',
+        header: 'Войти',
         username: 'Ваш ник',
         password: 'Пароль',
         invalidPassword: 'Неверные имя пользователя или пароль',
-        submit: 'Регистрация',
+        submit: 'Войти',
         noSignUpWithLink: 'Нет аккаунта?',
       },
       signup: {
@@ -70,12 +70,14 @@ const resources = {
         },
         removeChannel: {
           title: 'Удалить канал',
-          body: 'Вы уверены?',
+          body: 'Уверены, что хотите удалить канал?',
           deleteBtn: 'Удалить',
         },
         renameChannel: {
           title: 'Переименовать канал',
+          confirmBtn: 'Сохранить',
           label: 'Имя канала',
+          placeholder: 'Введите новое название канала',
         },
         confirmBtn: 'Отправить',
         cancelBtn: 'Отменить',
@@ -97,7 +99,7 @@ i18n
     lng: "ru",
     fallbackLng: "ru",
     debug: process.env.NODE_ENV === 'development',
-    
+
     interpolation: {
       escapeValue: false,
     }

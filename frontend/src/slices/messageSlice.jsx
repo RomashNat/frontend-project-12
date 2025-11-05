@@ -2,37 +2,67 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import routes from '../routes.js';
 import { removeMessageListener, connectSocket, joinChannel, leaveChannel } from '../socket';
+import { notify } from '../utils/notifications.js';
+import { filterProfanity } from '../utils/wordsfilter.js';
+
 
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',
-  async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(routes.messagesPath(), {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return response.data;
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await axios.get(routes.messagesPath(), {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+            const filteredMessages = response.data.map(message => ({
+        ...message,
+        body: filterProfanity(message.body)
+      }));
+      
+      return filteredMessages;
+
+    } catch (error) {
+      if (!navigator.onLine) {
+        notify.networkError();
+      } else {
+        notify.loadError();
+      }
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
 
+
 export const sendMessage = createAsyncThunk(
   'messages/sendMessage',
-  async ({ channelId, body, username }) => {
-    const token = localStorage.getItem('token');
-    const response = await axios.post(routes.addMessagePath(), {
-      channelId,
-      body,
-      username
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+  async ({ channelId, body, username }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+        const filteredBody = filterProfanity(body);
+      const response = await axios.post(routes.addMessagePath(), {
+        channelId,
+        body: filteredBody,
+        username
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    // Чистим сообщение от двоеточия если оно есть
-    const cleanMessage = {
-      ...response.data,
-      body: response.data.body.startsWith(': ') ? response.data.body.slice(2) : response.data.body
-    };
+      // Чистим сообщение от двоеточия если оно есть
+      const cleanMessage = {
+        ...response.data,
+        body: response.data.body.startsWith(': ') ? response.data.body.slice(2) : response.data.body
+      };
 
-    return cleanMessage;
+      return cleanMessage;
+    } catch (error) {
+      if (!navigator.onLine) {
+        notify.networkError();
+      } else {
+        notify.messageError();
+      }
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
 
@@ -48,10 +78,14 @@ const messagesSlice = createSlice({
       // Проверяем, нет ли уже такого сообщения
       const existingMessage = state.messages.find(msg => msg.id === action.payload.id);
       if (!existingMessage) {
-        state.messages.push(action.payload);
+      const filteredMessage = {
+          ...action.payload,
+          body: filterProfanity(action.payload.body)
+        };
+        state.messages.push(filteredMessage);
       }
     },
-    removeChannelMessages: (state, action) => {
+     removeChannelMessages: (state, action) => {
       state.messages = state.messages.filter(message => message.channelId !== action.payload);
     },
     // Новые экшены для WebSocket
@@ -76,7 +110,7 @@ const messagesSlice = createSlice({
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
         state.loading = false;
-        state.messages = action.payload;
+        state.messages = action.payload; // Уже отфильтрованные сообщения
       })
       .addCase(fetchMessages.rejected, (state, action) => {
         state.loading = false;
@@ -86,7 +120,12 @@ const messagesSlice = createSlice({
         // Сообщение уже пришло через WebSocket, но на всякий случай проверяем
         const existingMessage = state.messages.find(msg => msg.id === action.payload.id);
         if (!existingMessage) {
-          state.messages.push(action.payload);
+          // Фильтруем сообщение еще раз для надежности
+          const filteredMessage = {
+            ...action.payload,
+            body: filterProfanity(action.payload.body)
+          };
+          state.messages.push(filteredMessage);
         }
       });
   }

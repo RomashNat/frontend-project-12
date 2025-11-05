@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendMessage } from '../slices/messageSlice.jsx';
+import { filterProfanity } from '../utils/wordsfilter.js';
 
 const MessageForm = () => {
   const [message, setMessage] = useState('');
@@ -21,13 +22,16 @@ const MessageForm = () => {
     if (!message.trim()) return;
 
     try {
+      const filteredMessage = filterProfanity(message.trim());
       await dispatch(sendMessage({
         channelId: currentChannelId,
-        body: message.trim(),
-        username: username 
+        body: filteredMessage,
+        username: username
+
       })).unwrap();
       console.log(username)
       setMessage(''); // Очищаем поле после отправки
+      
     } catch (error) {
       console.error('Ошибка отправки сообщения:', error);
     }
