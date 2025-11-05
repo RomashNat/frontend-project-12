@@ -16,11 +16,12 @@ export const fetchMessages = createAsyncThunk(
 
 export const sendMessage = createAsyncThunk(
   'messages/sendMessage',
-  async ({ channelId, body }) => {
+  async ({ channelId, body, username }) => {
     const token = localStorage.getItem('token');
     const response = await axios.post(routes.addMessagePath(), {
       channelId,
-      body
+      body,
+      username
     }, {
       headers: { Authorization: `Bearer ${token}` }
     });

@@ -26,7 +26,7 @@ const MessageForm = () => {
         body: message.trim(),
         username: username 
       })).unwrap();
-      
+      console.log(username)
       setMessage(''); // Очищаем поле после отправки
     } catch (error) {
       console.error('Ошибка отправки сообщения:', error);

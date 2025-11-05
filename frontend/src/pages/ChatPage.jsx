@@ -240,7 +240,7 @@ const ChatPage = () => {
                 {channelMessages.length > 0 ? (
                   channelMessages.map(message => (
                     <div key={message.id} className="message mb-3">
-                      <strong>{message.username} </strong>
+                      <strong>{message.username}: </strong>
                       {decodeHTML(message.body)}
                     </div>
                   ))
