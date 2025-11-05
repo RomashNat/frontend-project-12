@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import routes from '../routes.js';
-import { onNewMessage, removeMessageListener, connectSocket, joinChannel, leaveChannel } from '../socket';
+import { removeMessageListener, connectSocket, joinChannel, leaveChannel } from '../socket';
 
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',

@@ -7,7 +7,13 @@ const MessageForm = () => {
   const dispatch = useDispatch();
   
   const { currentChannelId } = useSelector(state => state.channels);
-  const { username } = useSelector(state => state.auth);
+    const username = useSelector(state => 
+    state.auth?.username || 
+    state.auth?.user?.username || 
+    state.user?.username
+  );
+
+  console.log('Username:', username); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +23,8 @@ const MessageForm = () => {
     try {
       await dispatch(sendMessage({
         channelId: currentChannelId,
-        body: message.trim()
+        body: message.trim(),
+        username: username 
       })).unwrap();
       
       setMessage(''); // Очищаем поле после отправки
