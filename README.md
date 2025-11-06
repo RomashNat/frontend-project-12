@@ -5,4 +5,4 @@ The real-time application for messaging between users
 [![Actions Status](https://github.com/RomashNat/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/RomashNat/frontend-project-12/actions)
 
 ### Link for testing project:
-https://frontend-project-12-6stp.onrender.com
+https://frontend-project-12-a32o.onrender.com
