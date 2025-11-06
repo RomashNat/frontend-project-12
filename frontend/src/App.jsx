@@ -18,13 +18,14 @@ import TestRollbar from './components/TestRollbar';
 const App = () => {
   const rollbar = useRollbar();
 
-  useEffect(() => {
-    // Логируем запуск приложения
-    rollbar.info('Приложение запущено', {
-      environment: process.env.NODE_ENV,
-      path: window.location.pathname
-    });
-  }, [rollbar]);
+ useEffect(() => {
+  // Принудительно отправим тестовое сообщение при загрузке
+  rollbar.log('App loaded - testing connection');
+  
+  // Проверим что Rollbar инициализирован
+  console.log('Rollbar instance:', rollbar);
+  console.log('Access token:', rollbar?.client?.accessToken);
+}, [rollbar]);
 
   // Функция для тестирования Rollbar
   const testRollbar = () => {
