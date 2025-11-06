@@ -9,7 +9,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react'
 
 const rollbarConfig = {
-  accessToken: 'fe8ff5222e14c946e03947c9c43b26f0', 
+  accessToken: '8bffc0bf35502f0820616321c66ddd38', 
   environment: 'production',
 };
 
