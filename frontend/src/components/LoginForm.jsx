@@ -21,17 +21,14 @@ const LoginForm = () => {
 
     if (!values.password) {
       errors.password = 'Обязательное поле';
-    } else if (values.password.length < 6) {
-      errors.password = 'Пароль должен содержать минимум 6 символов';
     }
-
     return errors;
   };
 
   const handleSubmit = async (values, { setSubmitting, setStatus, setErrors }) => {
     setSubmitting(true);
     setStatus(null);
-    
+
     try {
       // Используем dispatch для логина
       const result = await dispatch(login({
@@ -71,7 +68,7 @@ const LoginForm = () => {
           {({ isSubmitting, errors, touched, status }) => (
             <Form className="col-12">
               <h1 className="text-center mb-4">Войти</h1>
-              
+
               {/* Общее сообщение об ошибке авторизации */}
               {status?.error && (
                 <Alert variant="danger" className="mb-3">
@@ -117,10 +114,10 @@ const LoginForm = () => {
                 )}
               </div>
 
-              <Button 
-                type='submit' 
-                variant='outline-primary' 
-                className="w-100 mb-3" 
+              <Button
+                type='submit'
+                variant='outline-primary'
+                className="w-100 mb-3"
                 disabled={isSubmitting || loading}
               >
                 {(isSubmitting || loading) ? 'Вход...' : 'Войти'}
