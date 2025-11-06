@@ -4,8 +4,11 @@ install:
 start:
 	npm start
 
+dev:
+	cd frontend && npm run dev
+
 build:
-	npm run build
+	cd frontend && npm run build
 
 lint:
 	npx eslint --ext js,jsx .
@@ -19,5 +22,5 @@ localStart:
 vite:
 	npx vite preview --port 3000
 
-server:
-	npx start-server -s ./frontend/dist
+backend:
+	npm start
