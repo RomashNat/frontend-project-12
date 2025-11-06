@@ -13,57 +13,24 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useRollbar } from '@rollbar/react';
 import { useEffect } from 'react';
-import TestRollbar from './components/TestRollbar';
 
 const App = () => {
   const rollbar = useRollbar();
 
  useEffect(() => {
-  // Принудительно отправим тестовое сообщение при загрузке
-  rollbar.log('App loaded - testing connection');
-  
-  // Проверим что Rollbar инициализирован
-  console.log('Rollbar instance:', rollbar);
-  console.log('Access token:', rollbar?.client?.accessToken);
+   rollbar.info('Приложение запущено', {
+      environment: process.env.NODE_ENV,
+      path: window.location.pathname
+    });
 }, [rollbar]);
-
-  // Функция для тестирования Rollbar
-  const testRollbar = () => {
-    try {
-      throw new Error('Тестовая ошибка для проверки Rollbar!');
-    } catch (error) {
-      rollbar.error('Тест ошибки из App компонента', error, {
-        component: 'App',
-        timestamp: new Date().toISOString()
-      });
-    }
-  };
 
   return (
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
-        <BrowserRouter>
-          {/* Кнопка для тестирования Rollbar */}
-          <div style={{ 
-            position: 'fixed', 
-            top: '10px', 
-            right: '10px', 
-            zIndex: 10000 
-          }}>
-            <button 
-              onClick={testRollbar}
-              className="btn btn-warning btn-sm"
-              style={{ fontSize: '12px', padding: '2px 6px' }}
-            >
-              Test Rollbar
-            </button>
-          </div>
-          
+        <BrowserRouter>     
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<RegistrationPage />} />
-            {/* ДОБАВЛЕН ТЕСТОВЫЙ МАРШРУТ */}
-            <Route path="/test-rollbar" element={<TestRollbar />} />
             <Route path="/" element={
               <ProtectedRoute>
                 <ChatPage />
