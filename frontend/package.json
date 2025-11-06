@@ -7,10 +7,10 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build",
-    "start": "npx start-server -s ./dist",
-    "preview": "cd frontend && npm run preview",
+    "dev": "vite",
+    "build": "vite build",
+    "start": "npx serve -s ./dist -p 5000",
+    "preview": "vite preview",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix"
   },
