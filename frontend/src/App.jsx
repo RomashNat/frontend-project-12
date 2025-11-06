@@ -13,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useRollbar } from '@rollbar/react';
 import { useEffect } from 'react';
+import TestRollbar from './components/TestRollbar';
 
 const App = () => {
   const rollbar = useRollbar();
@@ -60,6 +61,8 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<RegistrationPage />} />
+            {/* ДОБАВЛЕН ТЕСТОВЫЙ МАРШРУТ */}
+            <Route path="/test-rollbar" element={<TestRollbar />} />
             <Route path="/" element={
               <ProtectedRoute>
                 <ChatPage />
