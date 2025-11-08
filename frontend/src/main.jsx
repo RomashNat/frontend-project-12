@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import ReactDOM from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { Provider } from 'react-redux'
 import store from './store.js'
@@ -25,4 +25,6 @@ const RootApp = () => (
   </RollbarProvider>
 );
 
-ReactDOM.createRoot(document.getElementById('chat')).render(<RootApp />);
+const container = document.getElementById('chat');
+const root = createRoot(container);
+root.render(<RootApp />);
