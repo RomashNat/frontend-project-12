@@ -2,17 +2,17 @@ install:
 	npm ci
 
 build:
-	rm -rf frontend/dist
+	rm -rf dist
 	npm run build
 
 start:
 	npm start
 
 dev:
-	npm run develop
+	npm run dev
 
 preview:
 	npm run preview
 
 test-server:
-	cd frontend && npx serve -s ./dist -p 5000
+	npx serve -s ./dist -p 5000
