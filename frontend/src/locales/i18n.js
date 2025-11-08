@@ -21,7 +21,7 @@ const resources = {
         username: 'Имя пользователя',
         password: 'Пароль',
         confirmPassword: 'Подтвердите пароль',
-        submit: 'Зарегистрироваться',
+        submit: 'Регистрация',
         feedbacks: {
           username: 'От 3 до 20 символов',
           password: 'Не менее 6 символов',
