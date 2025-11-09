@@ -44,6 +44,9 @@ const AddChannelModal = ({ show, onHide }) => {
     try {
       await dispatch(createChannel(name)).unwrap();
       setChannelName('');
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       onHide();
     } catch (error) {
       console.error('Ошибка создания канала:', error);
