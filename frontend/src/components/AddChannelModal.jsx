@@ -48,18 +48,14 @@ const AddChannelModal = ({ show, onHide }) => {
 
       onHide();
 
-       if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
-        alert('Канал создан');
-      } else {
-        toast.success('Канал создан', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
+      toast.success('Канал создан', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
 
     } catch (error) {
       console.error('Ошибка создания канала:', error);
@@ -72,7 +68,7 @@ const AddChannelModal = ({ show, onHide }) => {
   const handleClose = () => {
     setChannelName('');
     onHide();
-    
+
   };
 
   return (
