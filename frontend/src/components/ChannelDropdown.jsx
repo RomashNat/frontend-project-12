@@ -46,7 +46,6 @@ const ChannelDropdown = ({ channelId, onRename, onRemove }) => {
         <Dropdown.Item onClick={handleRename}>
           Переименовать
         </Dropdown.Item>
-
       </Dropdown.Menu>
     </Dropdown>
   );

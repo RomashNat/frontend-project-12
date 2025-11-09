@@ -25,7 +25,7 @@ const RegistrationForm = () => {
       .trim()
       .required('Обязательное поле')
       .min(6, 'Не менее 6 символов'),
-    
+
     confirmPassword: Yup.string()
       .trim()
       .required('Обязательное поле')
@@ -38,43 +38,44 @@ const RegistrationForm = () => {
     setServerError('');
 
     const { username, password } = values;
-    
+
     try {
-      // Используем dispatch для регистрации
-      const result = await dispatch(signup({
-        username: username.trim(), 
-        password 
-      })).unwrap();
+    const result = await dispatch(signup({
+      username: username.trim(),
+      password
+    })).unwrap();
 
-       toast.success('Регистрация выполнена успешно');
-      
-      // Если регистрация успешна - редирект на чат
-      if (result) {
-        resetForm();
-        navigate('/');
-      }
-    } catch (error) {
-      if (error?.status === 409) {
-        setUsernameTaken(true);
-      } else if (error?.status === 400) {
-        setServerError('Некорректные данные для регистрации');
-      } else if (error?.status === 500) {
-        setServerError('Ошибка сервера. Попробуйте позже');
-      } else {
-        setServerError('Произошла ошибка при регистрации');
-      }
-      console.error('Registration error:', error);
+    toast.success('Регистрация выполнена успешно');
+    resetForm();
+    
+    navigate('/');
+    
+  } catch (error) {
+    if (error?.status === 409) {
+      setUsernameTaken(true);
+      toast.error('Такой пользователь уже существует');
+    } else if (error?.status === 400) {
+      setServerError('Некорректные данные для регистрации');
+      toast.error('Некорректные данные для регистрации');
+    } else if (error?.status === 500) {
+      setServerError('Ошибка сервера. Попробуйте позже');
+      toast.error('Ошибка сервера. Попробуйте позже');
+    } else {
+      setServerError('Произошла ошибка при регистрации');
+      toast.error('Произошла ошибка при регистрации');
     }
+    console.error('Registration error:', error);
+  }
 
-    setSubmitting(false);
-  };
+  setSubmitting(false);
+};
 
   return (
     <Formik
-      initialValues={{ 
-        username: '', 
-        password: '', 
-        confirmPassword: '' 
+      initialValues={{
+        username: '',
+        password: '',
+        confirmPassword: ''
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -99,9 +100,8 @@ const RegistrationForm = () => {
               required
               placeholder="От 3 до 20 символов"
               id="username"
-              className={`form-control ${
-                (errors.username && touched.username) || isUsernameTaken ? 'is-invalid' : ''
-              }`}
+              className={`form-control ${(errors.username && touched.username) || isUsernameTaken ? 'is-invalid' : ''
+                }`}
               onBlur={(e) => {
                 handleBlur(e);
                 setUsernameTaken(false);
@@ -109,8 +109,8 @@ const RegistrationForm = () => {
             />
             <label htmlFor="username">Имя пользователя</label>
             <div className="invalid-feedback">
-              {isUsernameTaken 
-                ? 'Такой пользователь уже существует' 
+              {isUsernameTaken
+                ? 'Такой пользователь уже существует'
                 : errors.username || ''
               }
             </div>
@@ -124,9 +124,8 @@ const RegistrationForm = () => {
               required
               placeholder="Не менее 6 символов"
               id="password"
-              className={`form-control ${
-                errors.password && touched.password ? 'is-invalid' : ''
-              }`}
+              className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''
+                }`}
             />
             <label htmlFor="password">Пароль</label>
             <div className="invalid-feedback">
@@ -142,9 +141,8 @@ const RegistrationForm = () => {
               required
               placeholder="Пароли должны совпадать"
               id="confirmPassword"
-              className={`form-control ${
-                errors.confirmPassword && touched.confirmPassword ? 'is-invalid' : ''
-              }`}
+              className={`form-control ${errors.confirmPassword && touched.confirmPassword ? 'is-invalid' : ''
+                }`}
             />
             <label htmlFor="confirmPassword">Подтвердите пароль</label>
             <div className="invalid-feedback">
@@ -152,9 +150,9 @@ const RegistrationForm = () => {
             </div>
           </div>
 
-          <Button 
-            type="submit" 
-            variant="primary" 
+          <Button
+            type="submit"
+            variant="primary"
             className="w-100 mb-3"
             disabled={isSubmitting || loading}
           >
