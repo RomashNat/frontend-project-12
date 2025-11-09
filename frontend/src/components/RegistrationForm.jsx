@@ -40,35 +40,36 @@ const RegistrationForm = () => {
     const { username, password } = values;
 
     try {
-    const result = await dispatch(signup({
-      username: username.trim(),
-      password
-    })).unwrap();
+      const result = await dispatch(signup({
+        username: username.trim(),
+        password
+      })).unwrap();
 
-    toast.success('Регистрация выполнена успешно');
-    resetForm();
-    
-    navigate('/');
-    
-  } catch (error) {
-    if (error?.status === 409) {
-      setUsernameTaken(true);
-      toast.error('Такой пользователь уже существует');
-    } else if (error?.status === 400) {
-      setServerError('Некорректные данные для регистрации');
-      toast.error('Некорректные данные для регистрации');
-    } else if (error?.status === 500) {
-      setServerError('Ошибка сервера. Попробуйте позже');
-      toast.error('Ошибка сервера. Попробуйте позже');
-    } else {
-      setServerError('Произошла ошибка при регистрации');
-      toast.error('Произошла ошибка при регистрации');
+      if (result && result.token) {
+        toast.success('Регистрация выполнена успешно');
+        resetForm();
+        navigate('/');
+      }
+
+    } catch (error) {
+      if (error?.status === 409) {
+        setUsernameTaken(true);
+        toast.error('Такой пользователь уже существует');
+      } else if (error?.status === 400) {
+        setServerError('Некорректные данные для регистрации');
+        toast.error('Некорректные данные для регистрации');
+      } else if (error?.status === 500) {
+        setServerError('Ошибка сервера. Попробуйте позже');
+        toast.error('Ошибка сервера. Попробуйте позже');
+      } else {
+        setServerError('Произошла ошибка при регистрации');
+        toast.error('Произошла ошибка при регистрации');
+      }
+      console.error('Registration error:', error);
     }
-    console.error('Registration error:', error);
-  }
 
-  setSubmitting(false);
-};
+    setSubmitting(false);
+  };
 
   return (
     <Formik

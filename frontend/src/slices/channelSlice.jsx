@@ -7,9 +7,11 @@ export const fetchChannels = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
+      console.log('Fetching channels with token:', token);
       const response = await axios.get(routes.getChannelsPath(), {
         headers: { Authorization: `Bearer ${token}` }
       });
+      console.log('Channels response:', response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -72,7 +74,7 @@ const channelsSlice = createSlice({
   name: 'channels',
   initialState: {
     channels: [],
-    currentChannelId: 1,
+    currentChannelId: null,
     loading: false,
     error: null
   },
@@ -106,7 +108,6 @@ const channelsSlice = createSlice({
         state.channels = action.payload;
       })
       .addCase(fetchChannels.rejected, (state, action) => {
-        а
         state.loading = false;
         state.error = action.error.message;
       })

@@ -36,10 +36,10 @@ const ChatPage = () => {
   const channelMessages = messages.filter(message => message.channelId === currentChannelId);
 
   // Разделяем каналы на системные и пользовательские
-  const systemChannels = channels.filter(channel => 
+  const systemChannels = channels.filter(channel =>
     channel.name === 'general' || channel.name === 'random'
   );
-  const userChannels = channels.filter(channel => 
+  const userChannels = channels.filter(channel =>
     channel.name !== 'general' && channel.name !== 'random'
   );
 
@@ -105,8 +105,10 @@ const ChatPage = () => {
       const generalChannel = channels.find(channel => channel.name === 'general');
       if (generalChannel) {
         dispatch(setCurrentChannel(generalChannel.id));
-      }
+    } else if (channels.length > 0) {
+      dispatch(setCurrentChannel(channels[0].id));
     }
+  }
   }, [channels, currentChannelId, dispatch]);
 
   const handleChannelSelect = (channelId) => {
@@ -164,9 +166,9 @@ const ChatPage = () => {
           <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column">
             <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
               <b>{t('chat.channels')}</b>
-              <button 
-                type="button" 
-                className="p-0 text-primary btn btn-group-vertical" 
+              <button
+                type="button"
+                className="p-0 text-primary btn btn-group-vertical"
                 onClick={handleAddChannel}
                 title={t('modal.addChannel.title')}
               >
@@ -184,10 +186,11 @@ const ChatPage = () => {
                 <li key={channel.id} className="nav-item w-100">
                   <button
                     type="button"
-                    className={`w-100 rounded-0 text-start btn ${
-                      channel.id === currentChannelId ? 'btn-secondary' : ''
-                    }`}
+                    className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-secondary' : ''
+                      }`}
                     onClick={() => handleChannelSelect(channel.id)}
+                    role="button"
+                    name={channel.name}
                   >
                     <span className="me-1">#</span>
                     {channel.name}
@@ -201,9 +204,8 @@ const ChatPage = () => {
                   <div className="d-flex align-items-center">
                     <button
                       type="button"
-                      className={`w-100 rounded-0 text-start btn ${
-                        channel.id === currentChannelId ? 'btn-secondary' : ''
-                      }`}
+                      className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-secondary' : ''
+                        }`}
                       onClick={() => handleChannelSelect(channel.id)}
                     >
                       <span className="me-1">#</span>
