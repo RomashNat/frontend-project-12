@@ -5,9 +5,9 @@ import { useSelector } from 'react-redux';
 const ChannelDropdown = ({ channelId, onRename, onRemove }) => {
   const [show, setShow] = useState(false);
   const { channels } = useSelector(state => state.channels);
-  
+
   const channel = channels.find(ch => ch.id === channelId);
-  
+
   // Защищаем системные каналы
   const isSystemChannel = channel?.name === 'general' || channel?.name === 'random';
 
@@ -28,8 +28,8 @@ const ChannelDropdown = ({ channelId, onRename, onRemove }) => {
 
   return (
     <Dropdown show={show} onToggle={setShow}>
-      <Dropdown.Toggle 
-        variant="light" 
+      <Dropdown.Toggle
+        variant="light"
         className="p-1 border-0 bg-transparent"
         style={{ minWidth: '30px' }}
         id={`dropdown-channel-${channelId}`}
@@ -40,12 +40,13 @@ const ChannelDropdown = ({ channelId, onRename, onRemove }) => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
+        <Dropdown.Item onClick={handleRemove}>
+          Удалить
+        </Dropdown.Item>
         <Dropdown.Item onClick={handleRename}>
           Переименовать
         </Dropdown.Item>
-        <Dropdown.Item onClick={handleRemove} className="text-danger">
-          Удалить
-        </Dropdown.Item>
+
       </Dropdown.Menu>
     </Dropdown>
   );

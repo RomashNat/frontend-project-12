@@ -38,10 +38,20 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
         <Modal.Title>{t('modal.removeChannel.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+         <Form.Control
+              type="text"
+              value={channelName}
+              onChange={(e) => setChannelName(e.target.value)}
+              placeholder=""
+              required
+              minLength={3}
+              maxLength={20}
+              disabled={isSubmitting}
+            />
         {isDefaultChannel ? (
           <p>Невозможно удалить основной канал #general</p>
         ) : (
-          <p>{t('modal.removeChannel.body')} <strong>#{channel?.name}</strong>?</p>
+          <p>{t('modal.removeChannel.body')}</p>
         )}
       </Modal.Body>
       <Modal.Footer>
