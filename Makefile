@@ -1,18 +1,11 @@
+PORT ?= 5001
+
 install:
-	npm ci
+	npm install
 
 build:
-	rm -rf dist
-	npm run build
+	cd frontend && npm install
+	cd frontend && npm run build
 
 start:
-	npm start
-
-dev:
-	npm run dev
-
-preview:
-	npm run preview
-
-test-server:
-	npx serve -s ./dist -p 5000
+	npx start-server -s ./frontend/dist -p ${PORT}
