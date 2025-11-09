@@ -11,16 +11,16 @@ const AddChannelModal = ({ show, onHide }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const { channels } = useSelector(state => state.channels);
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const name = channelName.trim();
     if (!name) return;
 
     // Проверка на уникальность имени
-    const isNameUnique = !channels.some(channel => 
+    const isNameUnique = !channels.some(channel =>
       channel.name.toLowerCase() === name.toLowerCase()
     );
 
@@ -34,7 +34,7 @@ const AddChannelModal = ({ show, onHide }) => {
       return;
     }
 
-      if (hasProfanity(name)) {
+    if (hasProfanity(name)) {
       showError(t('modal.error.profanity'));
       return;
     }
@@ -65,6 +65,7 @@ const AddChannelModal = ({ show, onHide }) => {
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
+          <Form.Label>{t('modal.addChannel.label')}</Form.Label>
           <Form.Group>
             <Form.Control
               type="text"
@@ -80,7 +81,7 @@ const AddChannelModal = ({ show, onHide }) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose} disabled={isSubmitting}>
-             {t('modal.cancelBtn')}
+            {t('modal.cancelBtn')}
           </Button>
           <Button variant="primary" type="submit" disabled={isSubmitting}>
             {isSubmitting ? t('modal.confirmBtn') : t('modal.addChannel.createBtn')}
