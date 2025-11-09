@@ -46,17 +46,9 @@ const AddChannelModal = ({ show, onHide }) => {
       await dispatch(createChannel(name)).unwrap();
       setChannelName('');
 
+      toast.success(t('toast.createdChannel'));
+
       onHide();
-
-      toast.success('Канал создан', {
-        position: "top-right",
-        autoClose: 10000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: false,
-      });
-
 
     } catch (error) {
       console.error('Ошибка создания канала:', error);
