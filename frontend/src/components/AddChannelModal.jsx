@@ -72,6 +72,7 @@ const AddChannelModal = ({ show, onHide }) => {
   const handleClose = () => {
     setChannelName('');
     onHide();
+    
   };
 
   return (
