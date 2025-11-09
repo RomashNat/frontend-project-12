@@ -65,17 +65,17 @@ const resources = {
         addChannel: {
           title: 'Добавить канал',
           label: 'Имя канала',
-          createBtn: 'Создать',
+          createBtn: 'Отправить',
           placeholder: 'Имя канала', 
         },
         removeChannel: {
           title: 'Удалить канал',
-          body: 'Уверены, что хотите удалить канал?',
+          body: 'Уверены?',
           deleteBtn: 'Удалить',
         },
         renameChannel: {
           title: 'Переименовать канал',
-          confirmBtn: 'Сохранить',
+          confirmBtn: 'Отправить',
           label: 'Имя канала',
           placeholder: 'Введите новое название канала',
         },

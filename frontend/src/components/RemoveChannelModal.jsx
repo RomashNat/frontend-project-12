@@ -35,7 +35,7 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>{t('modal.RemoveChannel.title')}</Modal.Title>
+        <Modal.Title>{t('modal.removeChannel.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {isDefaultChannel ? (

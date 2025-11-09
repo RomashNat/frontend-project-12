@@ -246,7 +246,6 @@ const ChatPage = () => {
                   ))
                 ) : (
                   <div className="text-center text-muted mt-5">
-                    {t('chat.zeroMessages')}
                   </div>
                 )}
               </div>

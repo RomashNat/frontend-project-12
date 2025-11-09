@@ -69,13 +69,13 @@ const AddChannelModal = ({ show, onHide }) => {
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
-          <Form.Label>{t('modal.addChannel.label')}</Form.Label>
+          <Form.Label></Form.Label>
           <Form.Group>
             <Form.Control
               type="text"
               value={channelName}
               onChange={(e) => setChannelName(e.target.value)}
-              placeholder={t('modal.addChannel.placeholder')}
+              placeholder=""
               required
               minLength={3}
               maxLength={20}
