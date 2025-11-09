@@ -14,33 +14,6 @@ const AddChannelModal = ({ show, onHide }) => {
   const { channels } = useSelector(state => state.channels);
   const { t } = useTranslation();
 
-  const showSuccessMessage = () => {
-
-    const successDiv = document.createElement('div');
-    successDiv.id = 'channel-created-message';
-    successDiv.textContent = 'Канал создан';
-    successDiv.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: green;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 4px;
-      z-index: 9999;
-      font-size: 14px;
-    `;
-    document.body.appendChild(successDiv);
-
-    setTimeout(() => {
-      const element = document.getElementById('channel-created-message');
-      if (element) {
-        document.body.removeChild(element);
-      }
-    }, 5000);
-  };
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -74,8 +47,16 @@ const AddChannelModal = ({ show, onHide }) => {
       setChannelName('');
 
       onHide();
-      
-      showSuccessMessage();
+
+      toast.success('Канал создан', {
+        position: "top-right",
+        autoClose: 8000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+      });
+
 
     } catch (error) {
       console.error('Ошибка создания канала:', error);
