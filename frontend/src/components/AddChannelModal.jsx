@@ -47,7 +47,7 @@ const AddChannelModal = ({ show, onHide }) => {
 
       showSuccess('Канал создан');
 
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
       onHide();
     } catch (error) {
