@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import routes from '../routes.js';
 import { removeMessageListener, connectSocket, joinChannel, leaveChannel } from '../socket';
-import { notify } from '../utils/notifications.js';
 import { filterProfanity } from '../utils/wordsfilter.js';
 
 
@@ -23,16 +22,10 @@ export const fetchMessages = createAsyncThunk(
       return filteredMessages;
 
     } catch (error) {
-      if (!navigator.onLine) {
-        notify.networkError();
-      } else {
-        notify.loadError();
-      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
-
 
 export const sendMessage = createAsyncThunk(
   'messages/sendMessage',
@@ -56,11 +49,6 @@ export const sendMessage = createAsyncThunk(
 
       return cleanMessage;
     } catch (error) {
-      if (!navigator.onLine) {
-        notify.networkError();
-      } else {
-        notify.messageError();
-      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }

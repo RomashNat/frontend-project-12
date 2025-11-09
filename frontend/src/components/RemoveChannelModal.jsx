@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { deleteChannel } from '../slices/channelSlice.jsx';
 import { showError } from '../utils/notifications.js';
+import { toast } from 'react-toastify';
 
 const RemoveChannelModal = ({ show, onHide, channelId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,6 +22,7 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
 
     try {
       await dispatch(deleteChannel(channelId)).unwrap();
+      toast.success(t('toast.removedChannel')); 
       onHide();
     } catch (error) {
       console.error('Ошибка удаления канала:', error);

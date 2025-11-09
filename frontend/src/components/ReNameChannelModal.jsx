@@ -6,6 +6,7 @@ import { renameChannel } from '../slices/channelSlice.jsx';
 import { useTranslation } from 'react-i18next';
 import { showError } from '../utils/notifications.js';
 import { hasProfanity } from '../utils/wordsfilter.js';
+import { toast } from 'react-toastify';
 
 
 const RenameChannelModal = ({ show, onHide, channelId }) => {
@@ -53,6 +54,7 @@ const RenameChannelModal = ({ show, onHide, channelId }) => {
 
     try {
       await dispatch(renameChannel({ id: channelId, name })).unwrap();
+      toast.success(t('toast.renamedChannel'));
       onHide();
     } catch (error) {
       console.error('Ошибка переименования канала:', error);

@@ -5,7 +5,7 @@ import { createChannel } from '../slices/channelSlice.jsx';
 import { useTranslation } from 'react-i18next';
 import { showError } from '../utils/notifications.js';
 import { hasProfanity } from '../utils/wordsfilter.js';
-import { notify } from '../utils/notifications.js'; 
+import { toast } from 'react-toastify';
 
 const AddChannelModal = ({ show, onHide }) => {
   const [channelName, setChannelName] = useState('');
@@ -44,7 +44,7 @@ const AddChannelModal = ({ show, onHide }) => {
 
     try {
       await dispatch(createChannel(name)).unwrap();
-      notify.channelAdded(); 
+      toast.success(t('toast.createdChannel'));
       onHide();
       setChannelName('');
 

@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import routes from '../routes.js';
 import { connectSocket, disconnectSocket } from '../socket';
-import { notify } from '../utils/notifications.js';
 
 // Async thunks для логина и регистрации
 export const login = createAsyncThunk(
@@ -20,12 +19,10 @@ export const login = createAsyncThunk(
       
       // Автоматически подключаем сокет после успешного логина
          connectSocket();
-      
-      notify.loginSuccess();
+
       return userData;
     } catch (error) {
       const message = error.response?.data?.message || 'Ошибка входа';
-      notify.authError(message);
       return rejectWithValue({
         status: error.response?.status,
         message
@@ -49,12 +46,10 @@ export const signup = createAsyncThunk(
       
       // Автоматически подключаем сокет после успешной регистрации
       connectSocket();
-      
-      notify.signupSuccess();
+
       return userData;
     } catch (error) {
       const message = error.response?.data?.message || 'Ошибка регистрации';
-      notify.authError(message);
       return rejectWithValue({
         status: error.response?.status,
         message

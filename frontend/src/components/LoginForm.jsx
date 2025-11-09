@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Alert } from 'react-bootstrap';
 import { login } from '../slices/authSlice.jsx';
+import { toast } from 'react-toastify';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ const LoginForm = () => {
         username: values.username.trim(),
         password: values.password
       })).unwrap();
+
+       toast.success('Вход выполнен успешно');
 
       // Если логин успешен - редирект на чат
       if (result) {

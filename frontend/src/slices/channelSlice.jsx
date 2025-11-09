@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import routes from '../routes.js';
-import { notify } from '../utils/notifications.js';
 
 export const fetchChannels = createAsyncThunk(
   'channels/fetchChannels',
@@ -13,16 +12,11 @@ export const fetchChannels = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      if (!navigator.onLine) {
-        notify.networkError();
-      } else {
-        notify.loadError();
-      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
-  
+
 
 
 export const createChannel = createAsyncThunk(
@@ -37,11 +31,6 @@ export const createChannel = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      if (!navigator.onLine) {
-        notify.networkError();
-      } else {
-        notify.loadError();
-      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -57,14 +46,8 @@ export const renameChannel = createAsyncThunk(
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      notify.channelRenamed();
       return response.data;
     } catch (error) {
-      if (!navigator.onLine) {
-        notify.networkError();
-      } else {
-        notify.loadError();
-      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -78,14 +61,8 @@ export const deleteChannel = createAsyncThunk(
       await axios.delete(routes.channelPath(id), {
         headers: { Authorization: `Bearer ${token}` }
       });
-      notify.channelRemoved();
       return id;
     } catch (error) {
-      if (!navigator.onLine) {
-        notify.networkError();
-      } else {
-        notify.loadError();
-      }
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -129,6 +106,7 @@ const channelsSlice = createSlice({
         state.channels = action.payload;
       })
       .addCase(fetchChannels.rejected, (state, action) => {
+        а
         state.loading = false;
         state.error = action.error.message;
       })
@@ -145,7 +123,7 @@ const channelsSlice = createSlice({
       .addCase(deleteChannel.fulfilled, (state, action) => {
         state.channels = state.channels.filter(channel => channel.id !== action.payload);
         if (state.currentChannelId === action.payload) {
-          state.currentChannelId = 1; 
+          state.currentChannelId = 1;
         }
       });
   }
