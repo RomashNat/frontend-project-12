@@ -50,7 +50,7 @@ const AddChannelModal = ({ show, onHide }) => {
 
       toast.success('Канал создан', {
         position: "top-right",
-        autoClose: 8000,
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: false,
