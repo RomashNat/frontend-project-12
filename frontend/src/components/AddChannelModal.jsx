@@ -3,8 +3,9 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { createChannel } from '../slices/channelSlice.jsx';
 import { useTranslation } from 'react-i18next';
-import { showError, showSuccess } from '../utils/notifications.js';
+import { showError } from '../utils/notifications.js';
 import { hasProfanity } from '../utils/wordsfilter.js';
+import { toast } from 'react-toastify';
 
 const AddChannelModal = ({ show, onHide }) => {
   const [channelName, setChannelName] = useState('');
@@ -45,7 +46,14 @@ const AddChannelModal = ({ show, onHide }) => {
       await dispatch(createChannel(name)).unwrap();
       setChannelName('');
 
-      showSuccess('Канал создан');
+      toast.success('Канал создан', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
 
       await new Promise(resolve => setTimeout(resolve, 3000));
 
