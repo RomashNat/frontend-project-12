@@ -35,7 +35,6 @@ export const createChannel = createAsyncThunk(
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      notify.channelAdded();
       return response.data;
     } catch (error) {
       if (!navigator.onLine) {
