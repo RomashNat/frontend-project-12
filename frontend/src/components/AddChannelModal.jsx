@@ -47,6 +47,7 @@ const AddChannelModal = ({ show, onHide }) => {
       setChannelName('');
 
       toast.success(t('toast.createdChannel'));
+      setChannelName('');
 
       onHide();
 
