@@ -66,7 +66,7 @@ const resources = {
           title: 'Добавить канал',
           label: 'Имя канала',
           createBtn: 'Создать',
-          label: 'Имя канала',
+          placeholder: 'Имя канала', 
         },
         removeChannel: {
           title: 'Удалить канал',
