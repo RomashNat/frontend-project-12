@@ -105,10 +105,10 @@ const ChatPage = () => {
       const generalChannel = channels.find(channel => channel.name === 'general');
       if (generalChannel) {
         dispatch(setCurrentChannel(generalChannel.id));
-    } else if (channels.length > 0) {
-      dispatch(setCurrentChannel(channels[0].id));
+      } else if (channels.length > 0) {
+        dispatch(setCurrentChannel(channels[0].id));
+      }
     }
-  }
   }, [channels, currentChannelId, dispatch]);
 
   const handleChannelSelect = (channelId) => {
@@ -201,24 +201,26 @@ const ChatPage = () => {
               {/* Пользовательские каналы - с выпадающим меню */}
               {userChannels.map(channel => (
                 <li key={channel.id} className="nav-item w-100">
-                  <div className="d-flex align-items-center">
+                  <div className="btn-group w-100" role="group">
                     <button
                       type="button"
                       className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-secondary' : ''
                         }`}
+                      style={{
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0
+                      }}
                       onClick={() => handleChannelSelect(channel.id)}
                     >
                       <span className="me-1">#</span>
                       {channel.name}
                     </button>
-                    <div>
-                      <ChannelDropdown
-                        channelId={channel.id}
-                        
-                        onRename={() => handleRenameChannel(channel.id)}
-                        onRemove={() => handleRemoveChannel(channel.id)}
-                      />
-                    </div>
+                    <ChannelDropdown
+                      channelId={channel.id}
+                      isActive={channel.id === currentChannelId}
+                      onRename={() => handleRenameChannel(channel.id)}
+                      onRemove={() => handleRemoveChannel(channel.id)}
+                    />
                   </div>
                 </li>
               ))}

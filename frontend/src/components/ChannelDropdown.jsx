@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 
-const ChannelDropdown = ({ channelId, onRename, onRemove }) => {
+const ChannelDropdown = ({ channelId, onRename, onRemove,  isActive = false }) => {
   const [show, setShow] = useState(false);
   const { channels } = useSelector(state => state.channels);
 
@@ -28,13 +28,15 @@ const ChannelDropdown = ({ channelId, onRename, onRemove }) => {
 
   return (
     <Dropdown show={show} onToggle={setShow}>
-      <Dropdown.Toggle
-        variant="secondary"
+       <Dropdown.Toggle
+        variant={isActive ? "secondary" : "light"}
         className="flex-grow-0 dropdown-toggle dropdown-toggle-split"
         style={{
           minWidth: '30px',
           borderTopLeftRadius: 0,
-          borderBottomLeftRadius: 0
+          borderBottomLeftRadius: 0,
+          // borderTopRightRadius: '0.375rem',
+          // borderBottomRightRadius: '0.375rem'
         }}
         id={`dropdown-channel-${channelId}`}
       >

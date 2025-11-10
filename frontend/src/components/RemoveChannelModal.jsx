@@ -46,12 +46,13 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
           )}
         </Form.Group>
       </Modal.Body>
-      <Modal.Footer>
+      <div className="d-flex me-2 mb-2 justify-content-end">
         <Button variant="secondary" onClick={onHide}>
           {t('modal.cancelBtn')}
         </Button>
         {!isDefaultChannel && (
           <Button
+          className="d-flex me-2 mb-2 justify-content-end"
             variant="danger"
             onClick={handleDelete}
             disabled={isSubmitting}
@@ -59,7 +60,7 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
             {isSubmitting ? t('modal.confirmBtn') : t('modal.removeChannel.deleteBtn')}
           </Button>
         )}
-      </Modal.Footer>
+    </div>
     </Modal>
   );
 };
