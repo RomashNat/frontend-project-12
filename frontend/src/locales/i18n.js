@@ -83,11 +83,12 @@ const resources = {
         cancelBtn: 'Отменить',
       },
       toast: {
-        createdChannel: 'Канал создан',
+        addChannel: 'Канал создан',
         removedChannel: 'Канал удалён',
         renamedChannel: 'Канал переименован',
         fetchError: 'Ошибка соединения',
       },
+      
     }
   }
 };

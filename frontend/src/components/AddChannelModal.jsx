@@ -16,7 +16,7 @@ const AddChannelModal = ({ show, onHide }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log('Создание канала...');
     const name = channelName.trim();
     if (!name) return;
 
@@ -44,13 +44,16 @@ const AddChannelModal = ({ show, onHide }) => {
 
     try {
       await dispatch(createChannel(name)).unwrap();
-      toast.success(t('toast.createdChannel'));
+      console.log('Канал создан успешно');
+      toast.success(t('toast.addChannel'));
+      
+      console.log('Toast: Канал создан');
       onHide();
       setChannelName('');
 
     } catch (error) {
       console.error('Ошибка создания канала:', error);
-      alert('Не удалось создать канал');
+      alert('Не удалоёсь создать канал');
     } finally {
       setIsSubmitting(false);
     }
