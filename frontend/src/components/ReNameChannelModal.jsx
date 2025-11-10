@@ -1,4 +1,3 @@
-// components/RenameChannelModal.jsx
 import { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +8,7 @@ import { hasProfanity } from '../utils/wordsfilter.js';
 import { toast } from 'react-toastify';
 
 
-const RenameChannelModal = ({ show, onHide, channelId }) => {
+const ReNameChannelModal = ({ show, onHide, channelId }) => {
   const [channelName, setChannelName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
@@ -102,4 +101,4 @@ const RenameChannelModal = ({ show, onHide, channelId }) => {
   );
 };
 
-export default RenameChannelModal;
+export default ReNameChannelModal;

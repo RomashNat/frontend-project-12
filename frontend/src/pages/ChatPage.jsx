@@ -9,7 +9,7 @@ import { onNewMessage, removeMessageListener } from '../socket';
 import MessageForm from '../components/MessageForm.jsx';
 import AddChannelModal from '../components/AddChannelModal.jsx';
 import RemoveChannelModal from '../components/RemoveChannelModal.jsx';
-import RenameChannelModal from '../components/ReNameChannelModal.jsx';
+import ReNameChannelModal from '../components/ReNameChannelModal.jsx';
 import ChannelDropdown from '../components/ChannelDropdown.jsx';
 
 const ChatPage = () => {
@@ -269,7 +269,7 @@ const ChatPage = () => {
         channelId={selectedChannelId}
       />
 
-      <RenameChannelModal
+      <ReNameChannelModal
         show={showRenameModal}
         onHide={() => setShowRenameModal(false)}
         channelId={selectedChannelId}
