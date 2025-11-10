@@ -43,6 +43,7 @@ const AddChannelModal = ({ show, onHide }) => {
     setIsSubmitting(true);
 
     try {
+      
       await dispatch(createChannel(name)).unwrap();
       console.log('Канал создан успешно');
       toast.success(t('toast.addChannel'));

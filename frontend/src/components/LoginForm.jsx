@@ -37,7 +37,7 @@ const LoginForm = () => {
         password: values.password
       })).unwrap();
 
-       toast.success('Вход выполнен успешно');
+      toast.success('Вход выполнен успешно');
 
       // Если логин успешен - редирект на чат
       if (result) {
@@ -123,7 +123,7 @@ const LoginForm = () => {
                 className="w-100 mb-3"
                 disabled={isSubmitting || loading}
               >
-                {(isSubmitting || loading) ? 'Вход...' : 'Войти'}
+                Войти
               </Button>
             </Form>
           )}

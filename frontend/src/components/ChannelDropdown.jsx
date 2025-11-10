@@ -35,8 +35,6 @@ const ChannelDropdown = ({ channelId, onRename, onRemove,  isActive = false }) =
           minWidth: '30px',
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
-          // borderTopRightRadius: '0.375rem',
-          // borderBottomRightRadius: '0.375rem'
         }}
         id={`dropdown-channel-${channelId}`}
       >

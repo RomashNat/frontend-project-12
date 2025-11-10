@@ -157,7 +157,7 @@ const RegistrationForm = () => {
             className="w-100 mb-3"
             disabled={isSubmitting || loading}
           >
-            {(isSubmitting || loading) ? 'Регистрация...' : 'Зарегистрироваться'}
+            Зарегистрироваться
           </Button>
         </Form>
       )}

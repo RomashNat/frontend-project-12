@@ -46,13 +46,15 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
           )}
         </Form.Group>
       </Modal.Body>
-      <div className="d-flex me-2 mb-2 justify-content-end">
-        <Button variant="secondary" onClick={onHide}>
+      <div className="d-flex me-2 mb-3 justify-content-end">
+        <Button variant="secondary" 
+        onClick={onHide}
+        className="me-2">
           {t('modal.cancelBtn')}
         </Button>
         {!isDefaultChannel && (
           <Button
-          className="d-flex me-2 mb-2 justify-content-end"
+          className="me-2"
             variant="danger"
             onClick={handleDelete}
             disabled={isSubmitting}
