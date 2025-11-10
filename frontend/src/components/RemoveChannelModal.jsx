@@ -44,17 +44,7 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
           ) : (
             <p>{t('modal.removeChannel.body')}</p>
           )}
-          <Form.Control
-            type="text"
-            value={channel ? channel.name : ''}
-            placeholder=""
-            required
-            minLength={3}
-            maxLength={20}
-            disabled={isSubmitting}
-          />
         </Form.Group>
-
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>

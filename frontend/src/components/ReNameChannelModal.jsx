@@ -80,7 +80,7 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
               type="text"
               value={channelName}
               onChange={(e) => setChannelName(e.target.value)}
-              placeholder=""
+              placeholder="Имя канала"
               required
               minLength={3}
               maxLength={20}

@@ -211,7 +211,7 @@ const ChatPage = () => {
                       <span className="me-1">#</span>
                       {channel.name}
                     </button>
-                    <div className="ms-2">
+                    <div>
                       <ChannelDropdown
                         channelId={channel.id}
                         onRename={() => handleRenameChannel(channel.id)}
