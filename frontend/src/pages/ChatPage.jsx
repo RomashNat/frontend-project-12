@@ -214,6 +214,7 @@ const ChatPage = () => {
                     <div>
                       <ChannelDropdown
                         channelId={channel.id}
+                        
                         onRename={() => handleRenameChannel(channel.id)}
                         onRemove={() => handleRemoveChannel(channel.id)}
                       />

@@ -75,12 +75,13 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
+          <div style={{ display: 'none' }}>Имя канала</div>
           <Form.Group>
             <Form.Control
               type="text"
               value={channelName}
               onChange={(e) => setChannelName(e.target.value)}
-              placeholder="Имя канала"
+              placeholder=""
               required
               minLength={3}
               maxLength={20}
