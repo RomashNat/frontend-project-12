@@ -12,9 +12,13 @@ const resources = {
         header: 'Войти',
         username: 'Ваш ник',
         password: 'Пароль',
-        invalidPassword: 'Неверные имя пользователя или пароль',
         submit: 'Войти',
+        success: 'Вход выполнен успешно',
         noSignUpWithLink: 'Нет аккаунта?',
+        authError: 'Ошибка авторизации. Попробуйте еще раз.',
+        errors: {
+          loginError: 'Неверные имя пользователя или пароль',
+        },
       },
       signup: {
         header: 'Регистрация',
@@ -33,7 +37,8 @@ const resources = {
       },
       notFoundPage: {
         title: 'Страница не найдена',
-        toMainPage: 'Но вы можете перейти <homeLink>на главную страницу</homeLink>',
+        toMainPage: 'Перейти на главную страницу',
+        altText: 'Страница не найдена',
       },
       chat: {
         channels: 'Каналы',
@@ -59,14 +64,15 @@ const resources = {
         error: {
           required: 'Обязательное поле',
           length: 'От 3 до 20 символов',
-          notOneOf: 'Канал с таким именем уже существует',
+          notOneOf: 'Должно быть уникальным',
           profanity: 'Недопустимое название',
+          channelExist: 'Канал создан',
         },
         addChannel: {
           title: 'Добавить канал',
           label: 'Имя канала',
           createBtn: 'Отправить',
-          placeholder: 'Имя канала', 
+          placeholder: 'Имя канала',
         },
         removeChannel: {
           title: 'Удалить канал',
@@ -87,8 +93,38 @@ const resources = {
         removedChannel: 'Канал удалён',
         renamedChannel: 'Канал переименован',
         fetchError: 'Ошибка соединения',
+        addChannelerror: 'Ошибка при создании канала',
+        removeChannelerror: 'Ошибка при удалении канала',
+        renameChannelerror: 'Ошибка при переименовании канала',
       },
-      
+      validation: {
+        username: {
+          required: 'Обязательное поле',
+          min: 'От 3 до 20 символов',
+          max: 'От 3 до 20 символов',
+        },
+        password: {
+          required: 'Обязательное поле',
+          min: 'Не менее 6 символов',
+        },
+        confirmPassword: {
+          required: 'Обязательное поле',
+          match: 'Пароли должны совпадать',
+        },
+        channelName: {
+          required: 'Обязательное поле',
+          length: 'От 3 до 20 символов',
+          unique: 'Канал с таким именем уже существует',
+          profanity: 'Недопустимое название',
+        }
+      },
+      errors: {
+        network: 'Ошибка соединения',
+        unauthorized: 'Неверные имя пользователя или пароль',
+        conflict: 'Такой пользователь уже существует',
+        server: 'Ошибка сервера',
+        unknown: 'Произошла ошибка',
+      }
     }
   }
 };

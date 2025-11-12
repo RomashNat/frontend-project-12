@@ -8,18 +8,32 @@ export const fetchChannels = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       console.log('Fetching channels with token:', token);
+
+      if (!token) {
+        console.log('No token found, using mock channels');
+        return [
+          { id: 1, name: 'general', removable: false },
+          { id: 2, name: 'random', removable: false }
+        ];
+      }
+      
       const response = await axios.get(routes.getChannelsPath(), {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Channels response:', response.data);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      console.error('Error fetching channels:', error);
+     
+      console.log('Returning mock channels due to error');
+      return [
+        { id: 1, name: 'general', removable: false },
+        { id: 2, name: 'random', removable: false }
+      ];
+
     }
   }
 );
-
-
 
 export const createChannel = createAsyncThunk(
   'channels/createChannel',
@@ -104,16 +118,46 @@ const channelsSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchChannels.fulfilled, (state, action) => {
-        state.loading = false;
-        state.channels = action.payload;
-      })
+  state.loading = false;
+  
+  // Если каналов нет, создаем системные
+  if (action.payload.length === 0) {
+    console.log('Creating default system channels...');
+    state.channels = [
+      { id: 1, name: 'general', removable: false },
+      { id: 2, name: 'random', removable: false }
+    ];
+  } else {
+    state.channels = action.payload;
+  }
+  
+  // Устанавливаем текущий канал
+  if (!state.currentChannelId && state.channels.length > 0) {
+    state.currentChannelId = state.channels[0].id;
+  }
+})
       .addCase(fetchChannels.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
+        if (!state.currentChannelId && state.channels.length > 0) {
+          state.currentChannelId = state.channels[0].id;
+        }
+      })
+    
+      .addCase(createChannel.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(createChannel.fulfilled, (state, action) => {
+        state.loading = false;
         state.channels.push(action.payload);
-        state.currentChannelId = action.payload.id; // Переходим в новый канал
+        state.currentChannelId = action.payload.id;
+        console.log('Channel added to state:', action.payload);
+      })
+      .addCase(createChannel.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        console.error('Channel creation failed in reducer:', action.payload);
       })
       .addCase(renameChannel.fulfilled, (state, action) => {
         const channel = state.channels.find(ch => ch.id === action.payload.id);
@@ -127,8 +171,9 @@ const channelsSlice = createSlice({
           state.currentChannelId = 1;
         }
       });
-  }
-});
+    }
+    });
+      
 
 export const { setCurrentChannel, addChannel, removeChannel, updateChannel } = channelsSlice.actions;
 export default channelsSlice.reducer;

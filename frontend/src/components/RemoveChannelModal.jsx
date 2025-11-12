@@ -25,8 +25,7 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
       toast.success(t('toast.removedChannel'));
       onHide();
     } catch (error) {
-      console.error('Ошибка удаления канала:', error);
-      showError(t('toast.fetchError'));
+      showError(t('toast.removeChannelerror'));
     } finally {
       setIsSubmitting(false);
     }

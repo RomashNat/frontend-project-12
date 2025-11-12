@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import routes from '../routes.js';
-import { connectSocket, disconnectSocket } from '../socket';
+import { disconnectSocket, connectSocket } from '../socket'; 
 
 // Async thunks для логина и регистрации
 export const login = createAsyncThunk(
@@ -14,11 +14,12 @@ export const login = createAsyncThunk(
       });
       const userData = response.data;
       
+      console.log('Login successful, token:', userData.token);
+      
       localStorage.setItem('token', userData.token);
       localStorage.setItem('username', userData.username);
-      
-      // Автоматически подключаем сокет после успешного логина
-         connectSocket();
+
+      // connectSocket();
 
       return userData;
     } catch (error) {
@@ -43,9 +44,8 @@ export const signup = createAsyncThunk(
       
       localStorage.setItem('token', userData.token);
       localStorage.setItem('username', userData.username);
-      
-      // Автоматически подключаем сокет после успешной регистрации
-      connectSocket();
+
+      // connectSocket();
 
       return userData;
     } catch (error) {
@@ -75,8 +75,7 @@ const authSlice = createSlice({
       state.error = null;
       localStorage.removeItem('token');
       localStorage.removeItem('username');
-      // Отключаем сокет при логауте
-      disconnectSocket();
+      // disconnectSocket();
     },
     clearError: (state) => {
       state.error = null;

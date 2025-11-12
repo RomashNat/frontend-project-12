@@ -12,40 +12,44 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
   const [channelName, setChannelName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
+  const [validationError, setValidationError] = useState('');
   const { channels } = useSelector(state => state.channels);
-   const { t } = useTranslation();
-  
+  const { t } = useTranslation();
+
   const channel = channels.find(ch => ch.id === channelId);
 
   useEffect(() => {
     if (channel) {
       setChannelName(channel.name);
+      setValidationError('');
     }
   }, [channel]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const name = channelName.trim();
+    setValidationError('');
+
     if (!name || !channel) return;
 
     // Проверка на уникальность имени (исключая текущий канал)
-    const isNameUnique = !channels.some(ch => 
+    const isNameUnique = !channels.some(ch =>
       ch.id !== channelId && ch.name.toLowerCase() === name.toLowerCase()
     );
 
     if (!isNameUnique) {
-      showError(t('modal.error.notOneOf'));
+      setValidationError(t('modal.error.notOneOf'));
       return;
     }
 
     if (name.length < 3 || name.length > 20) {
-      showError(t('modal.error.length'));
+      setValidationError(t('modal.error.length'));
       return;
     }
 
-      if (hasProfanity(name)) {
-      showError(t('modal.error.profanity'));
+    if (hasProfanity(name)) {
+      setValidationError(t('modal.error.profanity'));
       return;
     }
 
@@ -56,8 +60,7 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
       toast.success(t('toast.renamedChannel'));
       onHide();
     } catch (error) {
-      console.error('Ошибка переименования канала:', error);
-      showError(t('toast.fetchError'));
+      setValidationError(t('toast.renameChannelerror'));
     } finally {
       setIsSubmitting(false);
     }
@@ -65,7 +68,13 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
 
   const handleClose = () => {
     setChannelName(channel?.name || '');
+    setValidationError('');
     onHide();
+  };
+
+    const handleInputChange = (e) => {
+    setChannelName(e.target.value);
+    setValidationError('');
   };
 
   return (
@@ -80,13 +89,21 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
             <Form.Control
               type="text"
               value={channelName}
-              onChange={(e) => setChannelName(e.target.value)}
+             onChange={handleInputChange}
               placeholder=""
               required
               minLength={3}
               maxLength={20}
               disabled={isSubmitting}
-            />
+              className={validationError ? 'is-invalid' : ''}
+            />  <Form.Label htmlFor="channelrename" className="visually-hidden">
+              Имя канала
+            </Form.Label>
+            {validationError && (
+              <div className="invalid-tooltip" style={{ display: 'block' }}>
+                {validationError}
+              </div>
+            )}
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>

@@ -10,15 +10,20 @@ import { toast } from 'react-toastify';
 const AddChannelModal = ({ show, onHide }) => {
   const [channelName, setChannelName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState('');
   const dispatch = useDispatch();
   const { channels } = useSelector(state => state.channels);
   const { t } = useTranslation();
 
-  const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Создание канала...');
-    const name = channelName.trim();
-    if (!name) return;
+    let name = channelName.trim();
+    setValidationError('');
+
+    if (!name) {
+      setValidationError(t('modal.error.required'));
+      return;
+    }
 
     // Проверка на уникальность имени
     const isNameUnique = !channels.some(channel =>
@@ -26,35 +31,29 @@ const AddChannelModal = ({ show, onHide }) => {
     );
 
     if (!isNameUnique) {
-      showError(t('modal.error.notOneOf'));
+      setValidationError(t('modal.error.notOneOf'));
+      return;
+    }
+
+     if (hasProfanity(name)) {
+      setValidationError(t('modal.error.profanity'));
       return;
     }
 
     if (name.length < 3 || name.length > 20) {
-      alert('Название канала должно быть от 3 до 20 символов');
-      return;
-    }
-
-    if (hasProfanity(name)) {
-      showError(t('modal.error.profanity'));
+      setValidationError(t('modal.error.length'));
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      
       await dispatch(createChannel(name)).unwrap();
-      console.log('Канал создан успешно');
       toast.success(t('toast.addChannel'));
-      
-      console.log('Toast: Канал создан');
       onHide();
       setChannelName('');
-
     } catch (error) {
-      console.error('Ошибка создания канала:', error);
-      alert('Не удалоёсь создать канал');
+      showError(t('toast.addChannelerror'));
     } finally {
       setIsSubmitting(false);
     }
@@ -62,8 +61,13 @@ const AddChannelModal = ({ show, onHide }) => {
 
   const handleClose = () => {
     setChannelName('');
+    setValidationError('');
     onHide();
+  };
 
+  const handleInputChange = (e) => {
+    setChannelName(e.target.value);
+    setValidationError('');
   };
 
   return (
@@ -73,18 +77,24 @@ const AddChannelModal = ({ show, onHide }) => {
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
-          <div style={{ display: 'none' }}>Имя канала</div>
           <Form.Group>
             <Form.Control
               type="text"
+              id="channelname"
               value={channelName}
-              onChange={(e) => setChannelName(e.target.value)}
+              onChange={handleInputChange}
               placeholder=""
-              required
-              minLength={3}
-              maxLength={20}
               disabled={isSubmitting}
+              className={validationError ? 'is-invalid' : ''}
             />
+            <Form.Label htmlFor="channelname" className="visually-hidden">
+              Имя канала
+            </Form.Label>
+            {validationError && (
+              <div className="invalid-tooltip" style={{ display: 'block' }}>
+                {validationError}
+              </div>
+            )}
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>

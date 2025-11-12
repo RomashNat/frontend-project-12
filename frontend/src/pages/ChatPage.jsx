@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { fetchChannels, setCurrentChannel } from '../slices/channelSlice';
-import { fetchMessages, initSocket, removeSocket, joinChannelSocket, leaveChannelSocket, addMessage } from '../slices/messageSlice.jsx';
+import { fetchMessages, addMessage } from '../slices/messageSlice.jsx';
 import { onNewMessage, removeMessageListener } from '../socket';
 import MessageForm from '../components/MessageForm.jsx';
 import AddChannelModal from '../components/AddChannelModal.jsx';
@@ -27,21 +27,29 @@ const ChatPage = () => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState(null);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-  const { channels, currentChannelId } = useSelector(state => state.channels);
+  const { channels, currentChannelId, loading } = useSelector(state => state.channels);
   const { messages } = useSelector(state => state.messages);
 
   const currentChannel = channels.find(channel => channel.id === currentChannelId);
   const channelMessages = messages.filter(message => message.channelId === currentChannelId);
 
   // Разделяем каналы на системные и пользовательские
-  const systemChannels = channels.filter(channel =>
-    channel.name === 'general' || channel.name === 'random'
+  // Используем removable флаг для определения системных каналов
+  const systemChannels = channels.filter(channel => 
+    channel.name === 'general' || channel.name === 'random' || channel.removable === false
   );
-  const userChannels = channels.filter(channel =>
-    channel.name !== 'general' && channel.name !== 'random'
+  const userChannels = channels.filter(channel => 
+    channel.name !== 'general' && channel.name !== 'random' && channel.removable !== false
   );
+
+  // ДОБАВЬТЕ ЛОГИ ДЛЯ ОТЛАДКИ
+  console.log('All channels:', channels);
+  console.log('System channels:', systemChannels);
+  console.log('User channels:', userChannels);
+  console.log('Loading channels:', loading);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -49,26 +57,31 @@ const ChatPage = () => {
       return;
     }
 
-    // Инициализируем WebSocket
-    dispatch(initSocket());
-
     // Загружаем каналы и сообщения
-    dispatch(fetchChannels());
-    dispatch(fetchMessages());
+     dispatch(fetchChannels())
+    .unwrap()
+    .catch(error => {
+      console.error('Failed to load channels:', error);
+      if (error?.status === 401) {
+        // Если 401 - перенаправляем на логин
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        navigate('/login');
+      }
+    });
+    
+  dispatch(fetchMessages());
 
-    // Очистка при размонтировании
-    return () => {
-      dispatch(removeSocket());
-    };
-  }, [isAuthenticated, navigate, dispatch]);
+  return () => {
+    removeMessageListener();
+  };
+}, [isAuthenticated, navigate, dispatch]);
 
-  // Отдельный эффект для WebSocket слушателей
+  // WebSocket слушатель
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    // Обработчик новых сообщений
     const handleNewMessage = (newMessage) => {
-      // Очищаем сообщение от двоеточия если оно есть
       const cleanMessage = {
         ...newMessage,
         body: newMessage.body.startsWith(': ') ? newMessage.body.slice(2) : newMessage.body
@@ -76,32 +89,16 @@ const ChatPage = () => {
       dispatch(addMessage(cleanMessage));
     };
 
-    // Устанавливаем слушатель для новых сообщений
     onNewMessage(handleNewMessage);
 
-    // Очистка при размонтировании
     return () => {
       removeMessageListener();
     };
   }, [isAuthenticated, dispatch]);
 
-  // Эффект для присоединения к каналу при смене текущего канала
-  useEffect(() => {
-    if (currentChannelId) {
-      dispatch(joinChannelSocket(currentChannelId));
-    }
-
-    // При смене канала выходим из предыдущего
-    return () => {
-      if (currentChannelId) {
-        dispatch(leaveChannelSocket(currentChannelId));
-      }
-    };
-  }, [currentChannelId, dispatch]);
-
   // Автоматически выбираем канал general при первой загрузке
   useEffect(() => {
-    if (channels.length > 0 && !currentChannelId) {
+    if (channels.length > 0 && !currentChannelId && isDataLoaded) {
       const generalChannel = channels.find(channel => channel.name === 'general');
       if (generalChannel) {
         dispatch(setCurrentChannel(generalChannel.id));
@@ -109,7 +106,7 @@ const ChatPage = () => {
         dispatch(setCurrentChannel(channels[0].id));
       }
     }
-  }, [channels, currentChannelId, dispatch]);
+  }, [channels, currentChannelId, isDataLoaded, dispatch]);
 
   const handleChannelSelect = (channelId) => {
     dispatch(setCurrentChannel(channelId));
@@ -135,7 +132,6 @@ const ChatPage = () => {
     navigate('/login');
   };
 
-  // Функция для правильного склонения сообщений
   const getMessagesCountText = (count) => {
     if (count % 10 === 1 && count % 100 !== 11) {
       return t('chat.messagesCount_0', { count });
@@ -148,6 +144,17 @@ const ChatPage = () => {
 
   if (!isAuthenticated) {
     return null;
+  }
+
+  // Показываем индикатор загрузки только если данные еще загружаются
+  if (loading && channels.length === 0) {
+    return (
+      <div className="h-100 d-flex align-items-center justify-content-center">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Загрузка каналов...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -186,8 +193,7 @@ const ChatPage = () => {
                 <li key={channel.id} className="nav-item w-100">
                   <button
                     type="button"
-                    className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-secondary' : ''
-                      }`}
+                    className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-secondary' : ''}`}
                     onClick={() => handleChannelSelect(channel.id)}
                     role="button"
                     name={channel.name}
@@ -204,8 +210,7 @@ const ChatPage = () => {
                   <div className="btn-group w-100" role="group">
                     <button
                       type="button"
-                      className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-secondary' : ''
-                        }`}
+                      className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-secondary' : ''}`}
                       style={{
                         borderTopRightRadius: 0,
                         borderBottomRightRadius: 0
@@ -215,6 +220,7 @@ const ChatPage = () => {
                       <span className="me-1">#</span>
                       {channel.name}
                     </button>
+                    
                     <ChannelDropdown
                       channelId={channel.id}
                       isActive={channel.id === currentChannelId}
@@ -224,6 +230,15 @@ const ChatPage = () => {
                   </div>
                 </li>
               ))}
+
+              {/* Если каналов нет вообще */}
+              {channels.length === 0 && (
+                <li className="nav-item w-100">
+                  <div className="text-center text-muted p-2">
+                    Нет каналов
+                  </div>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -251,6 +266,7 @@ const ChatPage = () => {
                   ))
                 ) : (
                   <div className="text-center text-muted mt-5">
+                    {t('chat.zeroMessages')}
                   </div>
                 )}
               </div>

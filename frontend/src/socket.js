@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client'
 
 const socket = io('', {
-  path: '/socket.io',
+  path: '/socket.io', //endpoint
   autoConnect: false,
   auth: {
     token: localStorage.getItem('token'),
@@ -43,9 +43,5 @@ export const leaveChannel = (channelId) => {
   }
 }
 
-// Автоподключение если есть токен
-if (localStorage.getItem('token')) {
-  connectSocket();
-}
 
 export default socket;
