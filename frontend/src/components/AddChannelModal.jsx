@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createChannel } from '../slices/channelSlice.jsx';
 import { useTranslation } from 'react-i18next';
 import { showError } from '../utils/notifications.js';
-import { hasProfanity } from '../utils/wordsfilter.js';
+import { filterProfanity } from '../utils/wordsfilter.js';
 import { toast } from 'react-toastify';
 
 const AddChannelModal = ({ show, onHide }) => {
@@ -25,18 +25,16 @@ const AddChannelModal = ({ show, onHide }) => {
       return;
     }
 
+    // Применяем цензуру к имени для проверки уникальности
+    const censoredName = filterProfanity(name);
+
     // Проверка на уникальность имени
     const isNameUnique = !channels.some(channel =>
-      channel.name.toLowerCase() === name.toLowerCase()
+      channel.name.toLowerCase() === censoredName.toLowerCase()
     );
 
     if (!isNameUnique) {
       setValidationError(t('modal.error.notOneOf'));
-      return;
-    }
-
-    if (hasProfanity(name)) {
-      setValidationError(t('modal.error.profanity'));
       return;
     }
 
@@ -48,7 +46,8 @@ const AddChannelModal = ({ show, onHide }) => {
     setIsSubmitting(true);
 
     try {
-      await dispatch(createChannel(name)).unwrap();
+     // Создаем канал с зацензуренным именем
+      await dispatch(createChannel(censoredName)).unwrap();
       toast.success(t('toast.addChannel'));
       onHide();
       setChannelName('');

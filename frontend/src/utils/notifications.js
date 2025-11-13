@@ -9,6 +9,8 @@ export const showError = (message) => {
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
+    toastId: 'error-toast',
+    'data-testid': 'error-toast'
   });
 };
 
@@ -20,6 +22,8 @@ export const showSuccess = (message) => {
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
+     toastId: 'error-toast',
+    'data-testid': 'error-toast'
   });
 };
 
@@ -31,5 +35,7 @@ export const showInfo = (message) => {
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
+     toastId: 'error-toast',
+    'data-testid': 'error-toast'
   });
 };
