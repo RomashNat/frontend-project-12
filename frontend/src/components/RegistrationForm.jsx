@@ -48,13 +48,18 @@ const RegistrationForm = () => {
       if (result && result.token) {
         toast.success('Регистрация выполнена успешно');
         resetForm();
-        navigate('/');
+        // Добавляем небольшую задержку перед навигацией
+        setTimeout(() => {
+          navigate('/');
+        }, 100);
       }
 
     } catch (error) {
+      setSubmitting(false); // Важно сбросить submitting при ошибке
+
       if (error?.status === 409) {
         setUsernameTaken(true);
-        toast.error('Такой пользователь уже существует');
+        // toast.error('Такой пользователь уже существует');
       } else if (error?.status === 400) {
         setServerError('Некорректные данные для регистрации');
         toast.error('Некорректные данные для регистрации');
@@ -67,12 +72,10 @@ const RegistrationForm = () => {
       }
       console.error('Registration error:', error);
     }
-
-    setSubmitting(false);
   };
 
   return (
-    <Formik
+ <Formik
       initialValues={{
         username: '',
         password: '',
@@ -80,8 +83,8 @@ const RegistrationForm = () => {
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
-      validateOnChange={false}
-      validateOnBlur={false}
+      validateOnChange={true}
+      validateOnBlur={true}
     >
       {({ errors, touched, isSubmitting, handleBlur, handleChange }) => (
         <Form className="w-50 mx-auto">
@@ -93,6 +96,7 @@ const RegistrationForm = () => {
             </Alert>
           )}
 
+          {/* Поле username */}
           <div className="form-floating mb-3">
             <Field
               type="text"
@@ -101,22 +105,26 @@ const RegistrationForm = () => {
               required
               placeholder="От 3 до 20 символов"
               id="username"
-              className={`form-control ${(errors.username && touched.username) || isUsernameTaken ? 'is-invalid' : ''
-                }`}
+              className={`form-control ${(errors.username && touched.username) || isUsernameTaken ? 'is-invalid' : ''}`}
               onBlur={(e) => {
                 handleBlur(e);
                 setUsernameTaken(false);
               }}
+              onChange={(e) => {
+                handleChange(e);
+                if (isUsernameTaken) {
+                  setUsernameTaken(false);
+                }
+              }}
             />
             <label htmlFor="username">Имя пользователя</label>
-            <div className="invalid-feedback">
-              {isUsernameTaken
-                ? 'Такой пользователь уже существует'
-                : errors.username || ''
-              }
+       
+           <div className="invalid-feedback" style={{ display: 'block' }}>
+          {(errors.username && touched.username) ? errors.username : ''}
             </div>
           </div>
 
+          {/* Поле password */}
           <div className="form-floating mb-3">
             <Field
               type="password"
@@ -125,15 +133,15 @@ const RegistrationForm = () => {
               required
               placeholder="Не менее 6 символов"
               id="password"
-              className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''
-                }`}
+              className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
             />
             <label htmlFor="password">Пароль</label>
-            <div className="invalid-feedback">
-              {errors.password || ''}
+             <div className="invalid-feedback" style={{ display: 'block' }}>
+              {errors.password ? errors.password : ''}
             </div>
           </div>
 
+          {/* Поле confirmPassword - ВСЕ ошибки показываются здесь */}
           <div className="form-floating mb-4">
             <Field
               type="password"
@@ -142,22 +150,35 @@ const RegistrationForm = () => {
               required
               placeholder="Пароли должны совпадать"
               id="confirmPassword"
-              className={`form-control ${errors.confirmPassword && touched.confirmPassword ? 'is-invalid' : ''
-                }`}
+              className={`form-control ${
+                ((errors.confirmPassword && touched.confirmPassword) || 
+                (errors.username && touched.username) || 
+                (errors.password && touched.password) || 
+                isUsernameTaken) ? 'is-invalid' : ''
+              }`}
             />
             <label htmlFor="confirmPassword">Подтвердите пароль</label>
-            <div className="invalid-feedback">
-              {errors.confirmPassword || ''}
+            <div className="invalid-feedback" style={{ display: 'block' }}>
+              {isUsernameTaken
+                ? 'Такой пользователь уже существует'
+                : (errors.confirmPassword && touched.confirmPassword)
+                ? errors.confirmPassword
+                // : (errors.username && touched.username)
+                // ? errors.username
+                : (errors.password && touched.password)
+                ? errors.password
+                : ''
+              }
             </div>
           </div>
-
+            
           <Button
             type="submit"
-            variant="primary"
-            className="w-100 mb-3"
+            variant="outline-primary"
+            className="w-100"
             disabled={isSubmitting || loading}
           >
-            Зарегистрироваться
+            {isSubmitting || loading ? 'Регистрация...' : 'Зарегистрироваться'}
           </Button>
         </Form>
       )}

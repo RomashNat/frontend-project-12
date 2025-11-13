@@ -78,7 +78,7 @@ const AddChannelModal = ({ show, onHide }) => {
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
           <Form.Group>
-            <Form.Label htmlFor="channelname" className="visually-hidden">
+            <Form.Label htmlFor="name" className="visually-hidden">
               Имя канала
             </Form.Label>
             <Form.Control
