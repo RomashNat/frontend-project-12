@@ -15,7 +15,7 @@ const AddChannelModal = ({ show, onHide }) => {
   const { channels } = useSelector(state => state.channels);
   const { t } = useTranslation();
 
-   const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let name = channelName.trim();
     setValidationError('');
@@ -35,7 +35,7 @@ const AddChannelModal = ({ show, onHide }) => {
       return;
     }
 
-     if (hasProfanity(name)) {
+    if (hasProfanity(name)) {
       setValidationError(t('modal.error.profanity'));
       return;
     }
@@ -78,27 +78,28 @@ const AddChannelModal = ({ show, onHide }) => {
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
           <Form.Group>
+            <Form.Label htmlFor="channelname" className="visually-hidden">
+              Имя канала
+            </Form.Label>
             <Form.Control
               type="text"
-              id="channelname"
+              name="name"
+              id="name"
               value={channelName}
               onChange={handleInputChange}
               placeholder=""
               disabled={isSubmitting}
-              className={validationError ? 'is-invalid' : ''}
+              className={`mb-2 form-control ${validationError ? 'is-invalid' : ''}`}
             />
-            <Form.Label htmlFor="channelname" className="visually-hidden">
-              Имя канала
-            </Form.Label>
             {validationError && (
-              <div className="invalid-tooltip" style={{ display: 'block' }}>
+              <div className="invalid-feedback">
                 {validationError}
               </div>
             )}
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose} disabled={isSubmitting}>
+          <Button variant="secondary" onClick={handleClose} disabled={isSubmitting} className="me-2">
             {t('modal.cancelBtn')}
           </Button>
           <Button variant="primary" type="submit" disabled={isSubmitting}>

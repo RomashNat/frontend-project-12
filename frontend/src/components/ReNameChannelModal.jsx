@@ -84,30 +84,29 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
-          <div style={{ display: 'none' }}>Имя канала</div>
           <Form.Group>
+            <Form.Label htmlFor="name" className="visually-hidden">
+              Имя канала
+            </Form.Label>
             <Form.Control
               type="text"
+              id="name"
               value={channelName}
              onChange={handleInputChange}
               placeholder=""
               required
-              minLength={3}
-              maxLength={20}
               disabled={isSubmitting}
-              className={validationError ? 'is-invalid' : ''}
-            />  <Form.Label htmlFor="channelrename" className="visually-hidden">
-              Имя канала
-            </Form.Label>
+              className={`mb-2 form-control ${validationError ? 'is-invalid' : ''}`}
+            />  
             {validationError && (
-              <div className="invalid-tooltip" style={{ display: 'block' }}>
+              <div className="invalid-feedback" style={{ display: 'block' }}>
                 {validationError}
               </div>
             )}
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose} disabled={isSubmitting}>
+          <Button variant="secondary" onClick={handleClose} disabled={isSubmitting} className="me-2">
             {t('modal.cancelBtn')}
           </Button>
           <Button variant="primary" type="submit" disabled={isSubmitting}>
