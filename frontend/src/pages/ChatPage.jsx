@@ -274,7 +274,7 @@ const ChatPage = () => {
                         <div key={message.id} className="message mb-3">
                           <strong>
                             {message.username}
-                          :
+                            :
                             {' '}
                           </strong>
                           {decodeHTML(message.body)}
