@@ -52,7 +52,7 @@ const RegistrationForm = () => {
           navigate('/')
         }, 100)
       }
-    } catch {
+    } catch (error) { // Добавлен параметр error здесь
       setSubmitting(false) // Важно сбросить submitting при ошибке
 
       if (error?.status === 409) {
@@ -68,7 +68,6 @@ const RegistrationForm = () => {
         setServerError('Произошла ошибка при регистрации')
         toast.error('Произошла ошибка при регистрации')
       }
-      console.error('Registration error:', error)
     }
   }
 
