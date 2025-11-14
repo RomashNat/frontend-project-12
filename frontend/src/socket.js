@@ -4,7 +4,7 @@ let socket = null
 
 export const connectSocket = () => {
   const token = localStorage.getItem('token')
-  
+
   // Если нет токена, не подключаемся
   if (!token) {
     console.log('No token available for socket connection')
@@ -22,8 +22,8 @@ export const connectSocket = () => {
       path: '/socket.io',
       autoConnect: true,
       auth: {
-        token: token
-      }
+        token: token,
+      },
     })
 
     // Добавьте обработчики событий для отладки
@@ -44,7 +44,8 @@ export const connectSocket = () => {
     })
 
     return socket
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to create socket connection:', error)
     return null
   }
@@ -60,7 +61,8 @@ export const disconnectSocket = () => {
 export const onNewMessage = (callback) => {
   if (socket) {
     socket.on('newMessage', callback)
-  } else {
+  }
+  else {
     console.warn('Socket not available for message listener')
   }
 }

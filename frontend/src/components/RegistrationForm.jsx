@@ -153,7 +153,7 @@ const RegistrationForm = () => {
               id="confirmPassword"
               className={`form-control ${
                 ((errors.confirmPassword && touched.confirmPassword)
-                || (errors.username && touched.username)
+                  || (errors.username && touched.username)
                 || (errors.password && touched.password)
                 || isUsernameTaken)
                   ? 'is-invalid'
