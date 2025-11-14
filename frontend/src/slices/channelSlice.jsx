@@ -22,7 +22,8 @@ export const fetchChannels = createAsyncThunk(
       })
       console.log('Channels response:', response.data)
       return response.data
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error fetching channels:', error)
 
       console.log('Returning mock channels due to error')
@@ -31,7 +32,7 @@ export const fetchChannels = createAsyncThunk(
         { id: 2, name: 'random', removable: false },
       ]
     }
-  }
+  },
 )
 
 export const createChannel = createAsyncThunk(
@@ -45,10 +46,11 @@ export const createChannel = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       })
       return response.data
-    } catch (error) {
+    }
+    catch (error) {
       return rejectWithValue(error.response?.data || error.message)
     }
-  }
+  },
 )
 
 export const renameChannel = createAsyncThunk(
@@ -62,10 +64,11 @@ export const renameChannel = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       })
       return response.data
-    } catch (error) {
+    }
+    catch (error) {
       return rejectWithValue(error.response?.data || error.message)
     }
-  }
+  },
 )
 
 export const deleteChannel = createAsyncThunk(
@@ -77,10 +80,11 @@ export const deleteChannel = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       })
       return id
-    } catch (error) {
+    }
+    catch (error) {
       return rejectWithValue(error.response?.data || error.message)
     }
-  }
+  },
 )
 
 const channelsSlice = createSlice({
@@ -126,7 +130,8 @@ const channelsSlice = createSlice({
             { id: 1, name: 'general', removable: false },
             { id: 2, name: 'random', removable: false },
           ]
-        } else {
+        }
+        else {
           state.channels = action.payload
         }
 

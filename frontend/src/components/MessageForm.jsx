@@ -11,7 +11,7 @@ const MessageForm = () => {
   const username = useSelector(state =>
     state.auth?.username
     || state.auth?.user?.username
-    || state.user?.username
+    || state.user?.username,
   )
 
   console.log('Username:', username)
@@ -30,7 +30,8 @@ const MessageForm = () => {
       })).unwrap()
       console.log(username)
       setMessage('') // Очищаем поле после отправки
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Ошибка отправки сообщения:', error)
     }
   }

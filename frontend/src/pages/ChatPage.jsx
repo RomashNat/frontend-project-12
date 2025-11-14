@@ -37,10 +37,10 @@ const ChatPage = () => {
 
   // Разделяем каналы на системные и пользовательские
   const systemChannels = channels.filter(channel =>
-    channel.name === 'general' || channel.name === 'random' || channel.removable === false
+    channel.name === 'general' || channel.name === 'random' || channel.removable === false,
   )
   const userChannels = channels.filter(channel =>
-    channel.name !== 'general' && channel.name !== 'random' && channel.removable !== false
+    channel.name !== 'general' && channel.name !== 'random' && channel.removable !== false,
   )
 
   console.log('All channels:', channels)
@@ -59,7 +59,7 @@ const ChatPage = () => {
     // Загружаем каналы и сообщения
     dispatch(fetchChannels())
       .unwrap()
-      .catch(error => {
+      .catch((error) => {
         console.error('Failed to load channels:', error)
         if (error?.status === 401) {
           // Если 401 - перенаправляем на логин
@@ -267,24 +267,24 @@ const ChatPage = () => {
               >
                 {channelMessages.length > 0
                   ? channelMessages
-                    .filter((message, index, array) =>
-                      array.findIndex(m => m.id === message.id) === index
-                    )
-                    .map(message => (
-                      <div key={message.id} className="message mb-3">
-                        <strong>
-                          {message.username}
+                      .filter((message, index, array) =>
+                        array.findIndex(m => m.id === message.id) === index,
+                      )
+                      .map(message => (
+                        <div key={message.id} className="message mb-3">
+                          <strong>
+                            {message.username}
                           :
-                          {' '}
-                        </strong>
-                        {decodeHTML(message.body)}
-                      </div>
-                    ))
+                            {' '}
+                          </strong>
+                          {decodeHTML(message.body)}
+                        </div>
+                      ))
                   : (
-                    <div className="text-center text-muted mt-5">
-                      {t('chat.zeroMessages')}
-                    </div>
-                  )}
+                      <div className="text-center text-muted mt-5">
+                        {t('chat.zeroMessages')}
+                      </div>
+                    )}
               </div>
               <MessageForm />
             </div>

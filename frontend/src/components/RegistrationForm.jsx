@@ -52,19 +52,23 @@ const RegistrationForm = () => {
           navigate('/')
         }, 100)
       }
-    } catch (error) { // Добавлен параметр error здесь
+    }
+    catch (error) { // Добавлен параметр error здесь
       setSubmitting(false) // Важно сбросить submitting при ошибке
 
       if (error?.status === 409) {
         setUsernameTaken(true)
         // toast.error('Такой пользователь уже существует')
-      } else if (error?.status === 400) {
+      }
+      else if (error?.status === 400) {
         setServerError('Некорректные данные для регистрации')
         toast.error('Некорректные данные для регистрации')
-      } else if (error?.status === 500) {
+      }
+      else if (error?.status === 500) {
         setServerError('Ошибка сервера. Попробуйте позже')
         toast.error('Ошибка сервера. Попробуйте позже')
-      } else {
+      }
+      else {
         setServerError('Произошла ошибка при регистрации')
         toast.error('Произошла ошибка при регистрации')
       }
@@ -151,7 +155,9 @@ const RegistrationForm = () => {
                 ((errors.confirmPassword && touched.confirmPassword)
                 || (errors.username && touched.username)
                 || (errors.password && touched.password)
-                || isUsernameTaken) ? 'is-invalid' : ''
+                || isUsernameTaken)
+                  ? 'is-invalid'
+                  : ''
               }`}
             />
             <label htmlFor="confirmPassword">Подтвердите пароль</label>
@@ -159,10 +165,10 @@ const RegistrationForm = () => {
               {isUsernameTaken
                 ? 'Такой пользователь уже существует'
                 : (errors.confirmPassword && touched.confirmPassword)
-                  ? errors.confirmPassword
-                : (errors.password && touched.password)
-                  ? errors.password
-                  : ''}
+                    ? errors.confirmPassword
+                    : (errors.password && touched.password)
+                        ? errors.password
+                        : ''}
             </div>
           </div>
 

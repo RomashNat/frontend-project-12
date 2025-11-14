@@ -22,9 +22,11 @@ const RemoveChannelModal = ({ show, onHide, channelId }) => {
       await dispatch(deleteChannel(channelId)).unwrap()
       toast.success(t('toast.removedChannel'))
       onHide()
-    } catch {
+    }
+    catch {
       showError(t('toast.removeChannelerror'))
-    } finally {
+    }
+    finally {
       setIsSubmitting(false)
     }
   }

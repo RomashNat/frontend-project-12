@@ -30,7 +30,7 @@ const AddChannelModal = ({ show, onHide }) => {
 
     // Проверка на уникальность имени
     const isNameUnique = !channels.some(channel =>
-      channel.name.toLowerCase() === censoredName.toLowerCase()
+      channel.name.toLowerCase() === censoredName.toLowerCase(),
     )
 
     if (!isNameUnique) {
@@ -51,9 +51,11 @@ const AddChannelModal = ({ show, onHide }) => {
       toast.success(t('toast.addChannel'))
       onHide()
       setChannelName('')
-    } catch {
+    }
+    catch {
       showError(t('toast.addChannelerror'))
-    } finally {
+    }
+    finally {
       setIsSubmitting(false)
     }
   }

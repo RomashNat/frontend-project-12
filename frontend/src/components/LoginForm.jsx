@@ -16,7 +16,8 @@ const LoginForm = () => {
 
     if (!values.username) {
       errors.username = 'Обязательное поле'
-    } else if (values.username.length < 3) {
+    }
+    else if (values.username.length < 3) {
       errors.username = 'Имя пользователя должно содержать минимум 3 символа'
     }
 
@@ -43,7 +44,8 @@ const LoginForm = () => {
       if (result) {
         navigate('/')
       }
-    } catch (error) {
+    }
+    catch (error) {
       // Обработка ошибок авторизации
       if (error?.status === 401) {
         setStatus({ error: 'Неверные имя пользователя или пароль' })
@@ -52,10 +54,12 @@ const LoginForm = () => {
           username: ' ',
           password: ' ',
         })
-      } else {
+      }
+      else {
         setStatus({ error: 'Ошибка авторизации. Попробуйте еще раз.' })
       }
-    } finally {
+    }
+    finally {
       setSubmitting(false)
     }
   }

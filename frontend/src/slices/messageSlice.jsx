@@ -20,11 +20,12 @@ export const fetchMessages = createAsyncThunk(
       }))
 
       return filteredMessages
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error fetching messages:', error)
       return rejectWithValue(error.response?.data || error.message)
     }
-  }
+  },
 )
 
 export const sendMessage = createAsyncThunk(
@@ -51,16 +52,18 @@ export const sendMessage = createAsyncThunk(
       }
 
       return cleanMessage
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error sending message:', error)
       return rejectWithValue(error.response?.data || error.message)
     }
-  }
+  },
 )
 
 const messagesSlice = createSlice({
   name: 'messages',
-  initialState: {
+  initialState:
+  {
     messages: [],
     loading: false,
     error: null,
@@ -85,7 +88,8 @@ const messagesSlice = createSlice({
       // Безопасное подключение сокета
       try {
         connectSocket()
-      } catch (error) {
+      }
+      catch (error) {
         console.warn('Socket initialization failed:', error)
       }
     },

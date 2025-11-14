@@ -33,7 +33,7 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
 
     // Проверка на уникальность имени (исключая текущий канал)
     const isNameUnique = !channels.some(ch =>
-      ch.id !== channelId && ch.name.toLowerCase() === name.toLowerCase()
+      ch.id !== channelId && ch.name.toLowerCase() === name.toLowerCase(),
     )
 
     if (!isNameUnique) {
@@ -57,9 +57,11 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
       await dispatch(renameChannel({ id: channelId, name })).unwrap()
       toast.success(t('toast.renamedChannel'))
       onHide()
-    } catch {
+    }
+    catch {
       setValidationError(t('toast.renameChannelerror'))
-    } finally {
+    }
+    finally {
       setIsSubmitting(false)
     }
   }

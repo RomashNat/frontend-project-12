@@ -22,18 +22,20 @@ export const login = createAsyncThunk(
       // Безопасное подключение сокета
       try {
         connectSocket()
-      } catch (socketError) {
+      }
+      catch (socketError) {
         console.warn('Socket connection failed, but login successful:', socketError)
       }
 
       return userData
-    } catch (error) {
+    }
+    catch (error) {
       return rejectWithValue({
         status: error.response?.status,
         message: error.response?.data?.message || 'Ошибка входа',
       })
     }
-  }
+  },
 )
 
 export const signup = createAsyncThunk(
@@ -52,18 +54,20 @@ export const signup = createAsyncThunk(
       // Безопасное подключение сокета
       try {
         connectSocket()
-      } catch (socketError) {
+      }
+      catch (socketError) {
         console.warn('Socket connection failed, but signup successful:', socketError)
       }
 
       return userData
-    } catch (error) {
+    }
+    catch (error) {
       return rejectWithValue({
         status: error.response?.status,
         message: error.response?.data?.message || 'Ошибка регистрации',
       })
     }
-  }
+  },
 )
 
 const authSlice = createSlice({
