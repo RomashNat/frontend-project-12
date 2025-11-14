@@ -273,7 +273,7 @@ const ChatPage = () => {
                       .map(message => (
                         <div key={message.id} className="message mb-3">
                           <strong>
-                              {message.username}
+                            {message.username}
                           :
                             {' '}
                           </strong>
