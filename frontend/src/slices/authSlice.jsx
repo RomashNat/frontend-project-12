@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import routes from '../routes.js';
-// import { disconnectSocket, connectSocket } from '../socket'; 
+import { connectSocket } from '../socket';
 
 // Async thunks для логина и регистрации
 export const login = createAsyncThunk(
@@ -19,14 +19,18 @@ export const login = createAsyncThunk(
       localStorage.setItem('token', userData.token);
       localStorage.setItem('username', userData.username);
 
-      // connectSocket();
+      // Безопасное подключение сокета
+      try {
+        connectSocket();
+      } catch (socketError) {
+        console.warn('Socket connection failed, but login successful:', socketError);
+      }
 
       return userData;
     } catch (error) {
-      const message = error.response?.data?.message || 'Ошибка входа';
       return rejectWithValue({
         status: error.response?.status,
-        message: error.response?.data?.message || 'Ошибка регистрации'
+        message: error.response?.data?.message || 'Ошибка входа'
       });
     }
   }
@@ -45,14 +49,18 @@ export const signup = createAsyncThunk(
       localStorage.setItem('token', userData.token);
       localStorage.setItem('username', userData.username);
 
-      // connectSocket();
+      // Безопасное подключение сокета
+      try {
+        connectSocket();
+      } catch (socketError) {
+        console.warn('Socket connection failed, but signup successful:', socketError);
+      }
 
       return userData;
     } catch (error) {
-      const message = error.response?.data?.message || 'Ошибка регистрации';
       return rejectWithValue({
         status: error.response?.status,
-        message
+        message: error.response?.data?.message || 'Ошибка регистрации'
       });
     }
   }

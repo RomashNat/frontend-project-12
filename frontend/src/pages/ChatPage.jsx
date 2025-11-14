@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { fetchChannels, setCurrentChannel } from '../slices/channelSlice';
 import { fetchMessages, addMessage } from '../slices/messageSlice.jsx';
-import { onNewMessage, removeMessageListener } from '../socket';
+import { onNewMessage, removeMessageListener, connectSocket } from '../socket';
 import MessageForm from '../components/MessageForm.jsx';
 import AddChannelModal from '../components/AddChannelModal.jsx';
 import RemoveChannelModal from '../components/RemoveChannelModal.jsx';
@@ -38,14 +38,13 @@ const ChatPage = () => {
 
   // Разделяем каналы на системные и пользовательские
   // Используем removable флаг для определения системных каналов
-  const systemChannels = channels.filter(channel => 
+  const systemChannels = channels.filter(channel =>
     channel.name === 'general' || channel.name === 'random' || channel.removable === false
   );
-  const userChannels = channels.filter(channel => 
+  const userChannels = channels.filter(channel =>
     channel.name !== 'general' && channel.name !== 'random' && channel.removable !== false
   );
 
-  // ДОБАВЬТЕ ЛОГИ ДЛЯ ОТЛАДКИ
   console.log('All channels:', channels);
   console.log('System channels:', systemChannels);
   console.log('User channels:', userChannels);
@@ -57,31 +56,34 @@ const ChatPage = () => {
       return;
     }
 
-    // Загружаем каналы и сообщения
-     dispatch(fetchChannels())
-    .unwrap()
-    .catch(error => {
-      console.error('Failed to load channels:', error);
-      if (error?.status === 401) {
-        // Если 401 - перенаправляем на логин
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        navigate('/login');
-      }
-    });
-    
-  dispatch(fetchMessages());
+    connectSocket();
 
-  return () => {
-    removeMessageListener();
-  };
-}, [isAuthenticated, navigate, dispatch]);
+    // Загружаем каналы и сообщения
+    dispatch(fetchChannels())
+      .unwrap()
+      .catch(error => {
+        console.error('Failed to load channels:', error);
+        if (error?.status === 401) {
+          // Если 401 - перенаправляем на логин
+          localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          navigate('/login');
+        }
+      });
+
+    dispatch(fetchMessages());
+
+    return () => {
+      removeMessageListener();
+    };
+  }, [isAuthenticated, navigate, dispatch]);
 
   // WebSocket слушатель
   useEffect(() => {
     if (!isAuthenticated) return;
 
     const handleNewMessage = (newMessage) => {
+      console.log('New message received via WebSocket:', newMessage);
       const cleanMessage = {
         ...newMessage,
         body: newMessage.body.startsWith(': ') ? newMessage.body.slice(2) : newMessage.body
@@ -107,6 +109,15 @@ const ChatPage = () => {
       }
     }
   }, [channels, currentChannelId, isDataLoaded, dispatch]);
+
+    const messagesContainerRef = useRef(null);
+
+  // Автоматический скролл к новым сообщениям
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [channelMessages]);
 
   const handleChannelSelect = (channelId) => {
     dispatch(setCurrentChannel(channelId));
@@ -220,7 +231,7 @@ const ChatPage = () => {
                       <span className="me-1">#</span>
                       {channel.name}
                     </button>
-                    
+
                     <ChannelDropdown
                       channelId={channel.id}
                       isActive={channel.id === currentChannelId}
@@ -256,14 +267,19 @@ const ChatPage = () => {
               </div>
 
               {/* Область сообщений */}
-              <div className="chat-messages overflow-auto px-5 flex-grow-1">
+              <div className="chat-messages overflow-auto px-5 flex-grow-1"
+              ref={messagesContainerRef}>
                 {channelMessages.length > 0 ? (
-                  channelMessages.map(message => (
-                    <div key={message.id} className="message mb-3">
-                      <strong>{message.username}: </strong>
-                      {decodeHTML(message.body)}
-                    </div>
-                  ))
+                  channelMessages
+                    .filter((message, index, array) =>
+                      array.findIndex(m => m.id === message.id) === index
+                    )
+                    .map(message => (
+                      <div key={message.id} className="message mb-3">
+                        <strong>{message.username}: </strong>
+                        {decodeHTML(message.body)}
+                      </div>
+                    ))
                 ) : (
                   <div className="text-center text-muted mt-5">
                     {t('chat.zeroMessages')}

@@ -14,7 +14,8 @@ export const fetchMessages = createAsyncThunk(
       const response = await axios.get(routes.messagesPath(), {
         headers: { Authorization: `Bearer ${token}` }
       });
-            const filteredMessages = response.data.map(message => ({
+      
+      const filteredMessages = response.data.map(message => ({
         ...message,
         body: filterProfanity(message.body)
       }));
@@ -22,6 +23,7 @@ export const fetchMessages = createAsyncThunk(
       return filteredMessages;
 
     } catch (error) {
+      console.error('Error fetching messages:', error);
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -32,7 +34,8 @@ export const sendMessage = createAsyncThunk(
   async ({ channelId, body, username }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-        const filteredBody = filterProfanity(body);
+      const filteredBody = filterProfanity(body);
+      
       const response = await axios.post(routes.addMessagePath(), {
         channelId,
         body: filteredBody,
@@ -40,6 +43,8 @@ export const sendMessage = createAsyncThunk(
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      
+      console.log('Message sent successfully:', response.data);
 
       // Чистим сообщение от двоеточия если оно есть
       const cleanMessage = {
@@ -49,6 +54,7 @@ export const sendMessage = createAsyncThunk(
 
       return cleanMessage;
     } catch (error) {
+      console.error('Error sending message:', error);
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -66,20 +72,24 @@ const messagesSlice = createSlice({
       // Проверяем, нет ли уже такого сообщения
       const existingMessage = state.messages.find(msg => msg.id === action.payload.id);
       if (!existingMessage) {
-      const filteredMessage = {
+        const filteredMessage = {
           ...action.payload,
           body: filterProfanity(action.payload.body)
         };
         state.messages.push(filteredMessage);
       }
     },
-     removeChannelMessages: (state, action) => {
+    removeChannelMessages: (state, action) => {
       state.messages = state.messages.filter(message => message.channelId !== action.payload);
     },
     // Новые экшены для WebSocket
     initSocket: (state) => {
-      // Подключаем сокет
-      connectSocket();
+      // Безопасное подключение сокета
+      try {
+        connectSocket();
+      } catch (error) {
+        console.warn('Socket initialization failed:', error);
+      }
     },
     removeSocket: () => {
       removeMessageListener();
@@ -98,24 +108,22 @@ const messagesSlice = createSlice({
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
         state.loading = false;
-        state.messages = action.payload; // Уже отфильтрованные сообщения
+        state.messages = action.payload;
       })
       .addCase(fetchMessages.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
-      .addCase(sendMessage.fulfilled, (state, action) => {
-        // Сообщение уже пришло через WebSocket, но на всякий случай проверяем
-        const existingMessage = state.messages.find(msg => msg.id === action.payload.id);
-        if (!existingMessage) {
-          // Фильтруем сообщение еще раз для надежности
-          const filteredMessage = {
-            ...action.payload,
-            body: filterProfanity(action.payload.body)
-          };
-          state.messages.push(filteredMessage);
-        }
-      });
+      // .addCase(sendMessage.fulfilled, (state, action) => {
+      //   const existingMessage = state.messages.find(msg => msg.id === action.payload.id);
+      //   if (!existingMessage) {
+      //     const filteredMessage = {
+      //       ...action.payload,
+      //       body: filterProfanity(action.payload.body)
+      //     };
+      //     state.messages.push(filteredMessage);
+      //   }
+      // });
   }
 });
 
