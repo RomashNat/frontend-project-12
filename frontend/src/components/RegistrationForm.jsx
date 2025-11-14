@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import * as Yup from 'yup';
-import { Formik, Form, Field } from 'formik';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, Alert } from 'react-bootstrap';
-import { signup } from '../slices/authSlice';
-import { toast } from 'react-toastify';
+import { useState } from 'react'
+import * as Yup from 'yup'
+import { Formik, Form, Field } from 'formik'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Button, Alert } from 'react-bootstrap'
+import { signup } from '../slices/authSlice'
+import { toast } from 'react-toastify'
 
 const RegistrationForm = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { loading, error } = useSelector(state => state.auth);
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { loading } = useSelector(state => state.auth)
 
-  const [isUsernameTaken, setUsernameTaken] = useState(false);
-  const [serverError, setServerError] = useState('');
+  const [isUsernameTaken, setUsernameTaken] = useState(false)
+  const [serverError, setServerError] = useState('')
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
@@ -25,61 +25,59 @@ const RegistrationForm = () => {
       .trim()
       .required('Обязательное поле')
       .min(6, 'Не менее 6 символов'),
-
     confirmPassword: Yup.string()
       .trim()
       .required('Обязательное поле')
-      .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
-  });
+      .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать'),
+  })
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    setSubmitting(true);
-    setUsernameTaken(false);
-    setServerError('');
+    setSubmitting(true)
+    setUsernameTaken(false)
+    setServerError('')
 
-    const { username, password } = values;
+    const { username, password } = values
 
     try {
       const result = await dispatch(signup({
         username: username.trim(),
-        password
-      })).unwrap();
+        password,
+      })).unwrap()
 
       if (result && result.token) {
-        toast.success('Регистрация выполнена успешно');
-        resetForm();
+        toast.success('Регистрация выполнена успешно')
+        resetForm()
         // Добавляем небольшую задержку перед навигацией
         setTimeout(() => {
-          navigate('/');
-        }, 100);
+          navigate('/')
+        }, 100)
       }
-
-    } catch (error) {
-      setSubmitting(false); // Важно сбросить submitting при ошибке
+    } catch {
+      setSubmitting(false) // Важно сбросить submitting при ошибке
 
       if (error?.status === 409) {
-        setUsernameTaken(true);
-        // toast.error('Такой пользователь уже существует');
+        setUsernameTaken(true)
+        // toast.error('Такой пользователь уже существует')
       } else if (error?.status === 400) {
-        setServerError('Некорректные данные для регистрации');
-        toast.error('Некорректные данные для регистрации');
+        setServerError('Некорректные данные для регистрации')
+        toast.error('Некорректные данные для регистрации')
       } else if (error?.status === 500) {
-        setServerError('Ошибка сервера. Попробуйте позже');
-        toast.error('Ошибка сервера. Попробуйте позже');
+        setServerError('Ошибка сервера. Попробуйте позже')
+        toast.error('Ошибка сервера. Попробуйте позже')
       } else {
-        setServerError('Произошла ошибка при регистрации');
-        toast.error('Произошла ошибка при регистрации');
+        setServerError('Произошла ошибка при регистрации')
+        toast.error('Произошла ошибка при регистрации')
       }
-      console.error('Registration error:', error);
+      console.error('Registration error:', error)
     }
-  };
+  }
 
   return (
- <Formik
+    <Formik
       initialValues={{
         username: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -107,20 +105,20 @@ const RegistrationForm = () => {
               id="username"
               className={`form-control ${(errors.username && touched.username) || isUsernameTaken ? 'is-invalid' : ''}`}
               onBlur={(e) => {
-                handleBlur(e);
-                setUsernameTaken(false);
+                handleBlur(e)
+                setUsernameTaken(false)
               }}
               onChange={(e) => {
-                handleChange(e);
+                handleChange(e)
                 if (isUsernameTaken) {
-                  setUsernameTaken(false);
+                  setUsernameTaken(false)
                 }
               }}
             />
             <label htmlFor="username">Имя пользователя</label>
-       
-           <div className="invalid-feedback" style={{ display: 'block' }}>
-          {(errors.username && touched.username) ? errors.username : ''}
+
+            <div className="invalid-feedback" style={{ display: 'block' }}>
+              {(errors.username && touched.username) ? errors.username : ''}
             </div>
           </div>
 
@@ -136,7 +134,7 @@ const RegistrationForm = () => {
               className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
             />
             <label htmlFor="password">Пароль</label>
-             <div className="invalid-feedback" style={{ display: 'block' }}>
+            <div className="invalid-feedback" style={{ display: 'block' }}>
               {errors.password ? errors.password : ''}
             </div>
           </div>
@@ -151,10 +149,10 @@ const RegistrationForm = () => {
               placeholder="Пароли должны совпадать"
               id="confirmPassword"
               className={`form-control ${
-                ((errors.confirmPassword && touched.confirmPassword) || 
-                (errors.username && touched.username) || 
-                (errors.password && touched.password) || 
-                isUsernameTaken) ? 'is-invalid' : ''
+                ((errors.confirmPassword && touched.confirmPassword)
+                || (errors.username && touched.username)
+                || (errors.password && touched.password)
+                || isUsernameTaken) ? 'is-invalid' : ''
               }`}
             />
             <label htmlFor="confirmPassword">Подтвердите пароль</label>
@@ -162,16 +160,13 @@ const RegistrationForm = () => {
               {isUsernameTaken
                 ? 'Такой пользователь уже существует'
                 : (errors.confirmPassword && touched.confirmPassword)
-                ? errors.confirmPassword
-                // : (errors.username && touched.username)
-                // ? errors.username
+                  ? errors.confirmPassword
                 : (errors.password && touched.password)
-                ? errors.password
-                : ''
-              }
+                  ? errors.password
+                  : ''}
             </div>
           </div>
-            
+
           <Button
             type="submit"
             variant="outline-primary"
@@ -183,7 +178,7 @@ const RegistrationForm = () => {
         </Form>
       )}
     </Formik>
-  );
-};
+  )
+}
 
-export default RegistrationForm;
+export default RegistrationForm

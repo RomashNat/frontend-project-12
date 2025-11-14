@@ -1,10 +1,10 @@
 import LoginForm from '../components/LoginForm.jsx'
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 import { Row, Col, Card, Nav } from 'react-bootstrap'
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 
 const LoginPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div className="h-100 d-flex flex-column">
@@ -15,7 +15,7 @@ const LoginPage = () => {
           </Link>
         </div>
       </Nav>
-      <Row className="flex-grow-1 justify-content-center align-items-center"  style={{ width: '100%' }}>
+      <Row className="flex-grow-1 justify-content-center align-items-center" style={{ width: '100%' }}>
         <Col xs={12} md={8} xxl={6}>
           <Card className="shadow-sm">
             <Card.Body className="row p-5">
@@ -33,7 +33,10 @@ const LoginPage = () => {
             </Card.Body>
             <Card.Footer className="p-4 d-flex align-items-center justify-content-center">
               <div className="text-center">
-                <span>{t('loginPage.noSignUpWithLink')} </span>
+                <span>
+                  {t('loginPage.noSignUpWithLink')}
+                  {' '}
+                </span>
                 <Link to="/signup">{t('signup.submit')}</Link>
               </div>
             </Card.Footer>
@@ -41,7 +44,7 @@ const LoginPage = () => {
         </Col>
       </Row>
     </div>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage

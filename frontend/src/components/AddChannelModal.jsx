@@ -1,73 +1,73 @@
-import { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { createChannel } from '../slices/channelSlice.jsx';
-import { useTranslation } from 'react-i18next';
-import { showError } from '../utils/notifications.js';
-import { filterProfanity } from '../utils/wordsfilter.js';
-import { toast } from 'react-toastify';
+import { useState } from 'react'
+import { Modal, Button, Form } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
+import { createChannel } from '../slices/channelSlice.jsx'
+import { useTranslation } from 'react-i18next'
+import { showError } from '../utils/notifications.js'
+import { filterProfanity } from '../utils/wordsfilter.js'
+import { toast } from 'react-toastify'
 
 const AddChannelModal = ({ show, onHide }) => {
-  const [channelName, setChannelName] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validationError, setValidationError] = useState('');
-  const dispatch = useDispatch();
-  const { channels } = useSelector(state => state.channels);
-  const { t } = useTranslation();
+  const [channelName, setChannelName] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [validationError, setValidationError] = useState('')
+  const dispatch = useDispatch()
+  const { channels } = useSelector(state => state.channels)
+  const { t } = useTranslation()
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    let name = channelName.trim();
-    setValidationError('');
+    e.preventDefault()
+    let name = channelName.trim()
+    setValidationError('')
 
     if (!name) {
-      setValidationError(t('modal.error.required'));
-      return;
+      setValidationError(t('modal.error.required'))
+      return
     }
 
     // Применяем цензуру к имени для проверки уникальности
-    const censoredName = filterProfanity(name);
+    const censoredName = filterProfanity(name)
 
     // Проверка на уникальность имени
     const isNameUnique = !channels.some(channel =>
       channel.name.toLowerCase() === censoredName.toLowerCase()
-    );
+    )
 
     if (!isNameUnique) {
-      setValidationError(t('modal.error.notOneOf'));
-      return;
+      setValidationError(t('modal.error.notOneOf'))
+      return
     }
 
     if (name.length < 3 || name.length > 20) {
-      setValidationError(t('modal.error.length'));
-      return;
+      setValidationError(t('modal.error.length'))
+      return
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
-     // Создаем канал с зацензуренным именем
-      await dispatch(createChannel(censoredName)).unwrap();
-      toast.success(t('toast.addChannel'));
-      onHide();
-      setChannelName('');
-    } catch (error) {
-      showError(t('toast.addChannelerror'));
+      // Создаем канал с зацензуренным именем
+      await dispatch(createChannel(censoredName)).unwrap()
+      toast.success(t('toast.addChannel'))
+      onHide()
+      setChannelName('')
+    } catch {
+      showError(t('toast.addChannelerror'))
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   const handleClose = () => {
-    setChannelName('');
-    setValidationError('');
-    onHide();
-  };
+    setChannelName('')
+    setValidationError('')
+    onHide()
+  }
 
   const handleInputChange = (e) => {
-    setChannelName(e.target.value);
-    setValidationError('');
-  };
+    setChannelName(e.target.value)
+    setValidationError('')
+  }
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -107,7 +107,7 @@ const AddChannelModal = ({ show, onHide }) => {
         </Modal.Footer>
       </Form>
     </Modal>
-  );
-};
+  )
+}
 
-export default AddChannelModal;
+export default AddChannelModal

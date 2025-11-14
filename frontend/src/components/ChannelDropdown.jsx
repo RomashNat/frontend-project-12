@@ -1,35 +1,35 @@
-import { useState } from 'react';
-import { Dropdown } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { useState } from 'react'
+import { Dropdown } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
 
-const ChannelDropdown = ({ channelId, onRename, onRemove,  isActive = false }) => {
-  const [show, setShow] = useState(false);
-  const { channels } = useSelector(state => state.channels);
+const ChannelDropdown = ({ channelId, onRename, onRemove, isActive = false }) => {
+  const [show, setShow] = useState(false)
+  const { channels } = useSelector(state => state.channels)
 
-  const channel = channels.find(ch => ch.id === channelId);
+  const channel = channels.find(ch => ch.id === channelId)
 
   // Защищаем системные каналы
-  const isSystemChannel = channel?.name === 'general' || channel?.name === 'random';
+  const isSystemChannel = channel?.name === 'general' || channel?.name === 'random'
 
   // Если системный канал - не показываем меню вообще
   if (isSystemChannel) {
-    return null;
+    return null
   }
 
   const handleRename = () => {
-    onRename();
-    setShow(false);
-  };
+    onRename()
+    setShow(false)
+  }
 
   const handleRemove = () => {
-    onRemove();
-    setShow(false);
-  };
+    onRemove()
+    setShow(false)
+  }
 
   return (
     <Dropdown show={show} onToggle={setShow}>
-       <Dropdown.Toggle
-        variant={isActive ? "secondary" : "light"}
+      <Dropdown.Toggle
+        variant={isActive ? 'secondary' : 'light'}
         className="flex-grow-0 dropdown-toggle dropdown-toggle-split"
         style={{
           minWidth: '30px',
@@ -49,7 +49,7 @@ const ChannelDropdown = ({ channelId, onRename, onRemove,  isActive = false }) =
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
-  );
-};
+  )
+}
 
-export default ChannelDropdown;
+export default ChannelDropdown

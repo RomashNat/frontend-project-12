@@ -1,70 +1,70 @@
-import { Formik, Form, Field } from 'formik';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, Alert } from 'react-bootstrap';
-import { login } from '../slices/authSlice.jsx';
-import { toast } from 'react-toastify';
+import { Formik, Form, Field } from 'formik'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Button, Alert } from 'react-bootstrap'
+import { login } from '../slices/authSlice.jsx'
+import { toast } from 'react-toastify'
 
 const LoginForm = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { loading, error } = useSelector(state => state.auth);
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { loading } = useSelector(state => state.auth)
 
   // Функция валидации для проверки полей
   const validate = (values) => {
-    const errors = {};
+    const errors = {}
 
     if (!values.username) {
-      errors.username = 'Обязательное поле';
+      errors.username = 'Обязательное поле'
     } else if (values.username.length < 3) {
-      errors.username = 'Имя пользователя должно содержать минимум 3 символа';
+      errors.username = 'Имя пользователя должно содержать минимум 3 символа'
     }
 
     if (!values.password) {
-      errors.password = 'Обязательное поле';
+      errors.password = 'Обязательное поле'
     }
-    return errors;
-  };
+    return errors
+  }
 
   const handleSubmit = async (values, { setSubmitting, setStatus, setErrors }) => {
-    setSubmitting(true);
-    setStatus(null);
+    setSubmitting(true)
+    setStatus(null)
 
     try {
       // Используем dispatch для логина
       const result = await dispatch(login({
         username: values.username.trim(),
-        password: values.password
-      })).unwrap();
+        password: values.password,
+      })).unwrap()
 
-      toast.success('Вход выполнен успешно');
+      toast.success('Вход выполнен успешно')
 
       // Если логин успешен - редирект на чат
       if (result) {
-        navigate('/');
+        navigate('/')
       }
     } catch (error) {
       // Обработка ошибок авторизации
       if (error?.status === 401) {
-        setStatus({ error: 'Неверные имя пользователя или пароль' });
+        setStatus({ error: 'Неверные имя пользователя или пароль' })
         // Также можно подсветить поля
         setErrors({
           username: ' ',
-          password: ' '
-        });
+          password: ' ',
+        })
       } else {
-        setStatus({ error: 'Ошибка авторизации. Попробуйте еще раз.' });
+        setStatus({ error: 'Ошибка авторизации. Попробуйте еще раз.' })
       }
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   return (
     <div className="h-100 d-flex align-items-center justify-content-center">
       <div className="w-100">
         <Formik
-          initialValues={{ username: "", password: "" }}
+          initialValues={{ username: '', password: '' }}
           validate={validate} // Добавляем валидацию
           onSubmit={handleSubmit}
         >
@@ -92,7 +92,7 @@ const LoginForm = () => {
                 />
                 <label htmlFor="username">Ваш ник</label>
                 {touched.username && errors.username && (
-                  <div className='invalid-tooltip' style={{ display: 'block' }}>
+                  <div className="invalid-tooltip" style={{ display: 'block' }}>
                     {errors.username}
                   </div>
                 )}
@@ -111,15 +111,15 @@ const LoginForm = () => {
                 />
                 <label htmlFor="password">Пароль</label>
                 {touched.password && errors.password && (
-                  <div className='invalid-tooltip' style={{ display: 'block' }}>
+                  <div className="invalid-tooltip" style={{ display: 'block' }}>
                     {errors.password}
                   </div>
                 )}
               </div>
 
               <Button
-                type='submit'
-                variant='outline-primary'
+                type="submit"
+                variant="outline-primary"
                 className="w-100 mb-3"
                 disabled={isSubmitting || loading}
               >
@@ -130,7 +130,7 @@ const LoginForm = () => {
         </Formik>
       </div>
     </div>
-  );
+  )
 }
 
-export default LoginForm;
+export default LoginForm

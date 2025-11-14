@@ -1,5 +1,5 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
 const resources = {
   ru: {
@@ -116,7 +116,7 @@ const resources = {
           length: 'От 3 до 20 символов',
           unique: 'Канал с таким именем уже существует',
           profanity: 'Недопустимое название',
-        }
+        },
       },
       errors: {
         network: 'Ошибка соединения',
@@ -124,22 +124,22 @@ const resources = {
         conflict: 'Такой пользователь уже существует',
         server: 'Ошибка сервера',
         unknown: 'Произошла ошибка',
-      }
-    }
-  }
-};
+      },
+    },
+  },
+}
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: "ru",
-    fallbackLng: "ru",
-    debug: process.env.NODE_ENV === 'development',
+    lng: 'ru',
+    fallbackLng: 'ru',
+    debug: import.meta.env.MODE === 'development',
 
     interpolation: {
       escapeValue: false,
-    }
-  });
+    },
+  })
 
-export default i18n;
+export default i18n

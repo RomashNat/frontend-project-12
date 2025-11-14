@@ -1,57 +1,55 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { sendMessage } from '../slices/messageSlice.jsx';
-import { filterProfanity } from '../utils/wordsfilter.js';
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { sendMessage } from '../slices/messageSlice.jsx'
+import { filterProfanity } from '../utils/wordsfilter.js'
 
 const MessageForm = () => {
-  const [message, setMessage] = useState('');
-  const dispatch = useDispatch();
-  
-  const { currentChannelId } = useSelector(state => state.channels);
-    const username = useSelector(state => 
-    state.auth?.username || 
-    state.auth?.user?.username || 
-    state.user?.username
-  );
+  const [message, setMessage] = useState('')
+  const dispatch = useDispatch()
 
-  console.log('Username:', username); 
+  const { currentChannelId } = useSelector(state => state.channels)
+  const username = useSelector(state =>
+    state.auth?.username
+    || state.auth?.user?.username
+    || state.user?.username
+  )
+
+  console.log('Username:', username)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!message.trim()) return;
+    e.preventDefault()
+
+    if (!message.trim()) return
 
     try {
-      const filteredMessage = filterProfanity(message.trim());
+      const filteredMessage = filterProfanity(message.trim())
       await dispatch(sendMessage({
         channelId: currentChannelId,
         body: filteredMessage,
-        username: username
-
-      })).unwrap();
+        username: username,
+      })).unwrap()
       console.log(username)
-      setMessage(''); // Очищаем поле после отправки
-      
+      setMessage('') // Очищаем поле после отправки
     } catch (error) {
-      console.error('Ошибка отправки сообщения:', error);
+      console.error('Ошибка отправки сообщения:', error)
     }
-  };
+  }
 
   return (
     <div className="mt-auto px-5 py-3">
       <form onSubmit={handleSubmit} className="py-1 border rounded-2">
         <div className="input-group">
-          <input 
+          <input
             name="body"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            aria-label="Новое сообщение" 
-            placeholder="Введите сообщение..." 
-            className="border-0 p-0 ps-2 form-control" 
+            onChange={e => setMessage(e.target.value)}
+            aria-label="Новое сообщение"
+            placeholder="Введите сообщение..."
+            className="border-0 p-0 ps-2 form-control"
           />
-          <button 
-            type="submit" 
-            className="btn btn-group-vertical" 
+          <button
+            type="submit"
+            className="btn btn-group-vertical"
             disabled={!message.trim()}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
@@ -62,7 +60,7 @@ const MessageForm = () => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default MessageForm;
+export default MessageForm

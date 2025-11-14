@@ -1,48 +1,67 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { I18nextProvider } from 'react-i18next';
-import store from './store.js';
-import i18n from './locales/i18n.js';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import LoginPage from './pages/LoginPage.jsx';
-import ChatPage from './pages/ChatPage.jsx';
-import NotFoundPage from './pages/NotFoundPage.jsx';
-import RegistrationPage from './pages/RegistrationPage';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import ProtectedRoute from './components/ProtectedRoute';
-import { useRollbar } from '@rollbar/react';
-import { useEffect } from 'react';
+/* global process */
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { I18nextProvider } from 'react-i18next'
+import store from './store.js'
+import i18n from './locales/i18n.js'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import LoginPage from './pages/LoginPage.jsx'
+import ChatPage from './pages/ChatPage.jsx'
+import NotFoundPage from './pages/NotFoundPage.jsx'
+import RegistrationPage from './pages/RegistrationPage'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import ProtectedRoute from './components/ProtectedRoute'
+import { useRollbar } from '@rollbar/react'
+import { useEffect } from 'react'
 
 const App = () => {
-  const rollbar = useRollbar();
+  const rollbar = useRollbar()
 
- useEffect(() => {
-   rollbar.info('Приложение запущено', {
+  useEffect(() => {
+    rollbar.info('Приложение запущено', {
       environment: process.env.NODE_ENV,
-      path: window.location.pathname
-    });
-}, [rollbar]);
+      path: window.location.pathname,
+    })
+  }, [rollbar])
 
   return (
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
-        <BrowserRouter>     
+        <BrowserRouter>
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<RegistrationPage />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <ChatPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/chat" element={
-              <ProtectedRoute>
-                <ChatPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/404" element={<NotFoundPage />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />
+            <Route
+              path="/login"
+              element={<LoginPage />}
+            />
+            <Route
+              path="/signup"
+              element={<RegistrationPage />}
+            />
+            <Route
+              path="/"
+              element={(
+                <ProtectedRoute>
+                  <ChatPage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/chat"
+              element={(
+                <ProtectedRoute>
+                  <ChatPage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/404"
+              element={<NotFoundPage />}
+            />
+            <Route
+              path="*"
+              element={<Navigate to="/404" replace />}
+            />
           </Routes>
           <ToastContainer
             position="top-right"
@@ -59,7 +78,7 @@ const App = () => {
         </BrowserRouter>
       </I18nextProvider>
     </Provider>
-  );
-};
+  )
+}
 
-export default App;
+export default App

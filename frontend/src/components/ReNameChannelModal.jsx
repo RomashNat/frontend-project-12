@@ -1,81 +1,79 @@
-import { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { renameChannel } from '../slices/channelSlice.jsx';
-import { useTranslation } from 'react-i18next';
-import { showError } from '../utils/notifications.js';
-import { hasProfanity } from '../utils/wordsfilter.js';
-import { toast } from 'react-toastify';
-
+import { useState, useEffect } from 'react'
+import { Modal, Button, Form } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
+import { renameChannel } from '../slices/channelSlice.jsx'
+import { useTranslation } from 'react-i18next'
+import { hasProfanity } from '../utils/wordsfilter.js'
+import { toast } from 'react-toastify'
 
 const ReNameChannelModal = ({ show, onHide, channelId }) => {
-  const [channelName, setChannelName] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const dispatch = useDispatch();
-  const [validationError, setValidationError] = useState('');
-  const { channels } = useSelector(state => state.channels);
-  const { t } = useTranslation();
+  const [channelName, setChannelName] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const dispatch = useDispatch()
+  const [validationError, setValidationError] = useState('')
+  const { channels } = useSelector(state => state.channels)
+  const { t } = useTranslation()
 
-  const channel = channels.find(ch => ch.id === channelId);
+  const channel = channels.find(ch => ch.id === channelId)
 
   useEffect(() => {
     if (channel) {
-      setChannelName(channel.name);
-      setValidationError('');
+      setChannelName(channel.name)
+      setValidationError('')
     }
-  }, [channel]);
+  }, [channel])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const name = channelName.trim();
-    setValidationError('');
+    const name = channelName.trim()
+    setValidationError('')
 
-    if (!name || !channel) return;
+    if (!name || !channel) return
 
     // Проверка на уникальность имени (исключая текущий канал)
     const isNameUnique = !channels.some(ch =>
       ch.id !== channelId && ch.name.toLowerCase() === name.toLowerCase()
-    );
+    )
 
     if (!isNameUnique) {
-      setValidationError(t('modal.error.notOneOf'));
-      return;
+      setValidationError(t('modal.error.notOneOf'))
+      return
     }
 
     if (name.length < 3 || name.length > 20) {
-      setValidationError(t('modal.error.length'));
-      return;
+      setValidationError(t('modal.error.length'))
+      return
     }
 
     if (hasProfanity(name)) {
-      setValidationError(t('modal.error.profanity'));
-      return;
+      setValidationError(t('modal.error.profanity'))
+      return
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
-      await dispatch(renameChannel({ id: channelId, name })).unwrap();
-      toast.success(t('toast.renamedChannel'));
-      onHide();
-    } catch (error) {
-      setValidationError(t('toast.renameChannelerror'));
+      await dispatch(renameChannel({ id: channelId, name })).unwrap()
+      toast.success(t('toast.renamedChannel'))
+      onHide()
+    } catch {
+      setValidationError(t('toast.renameChannelerror'))
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   const handleClose = () => {
-    setChannelName(channel?.name || '');
-    setValidationError('');
-    onHide();
-  };
+    setChannelName(channel?.name || '')
+    setValidationError('')
+    onHide()
+  }
 
-    const handleInputChange = (e) => {
-    setChannelName(e.target.value);
-    setValidationError('');
-  };
+  const handleInputChange = (e) => {
+    setChannelName(e.target.value)
+    setValidationError('')
+  }
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -92,12 +90,12 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
               type="text"
               id="name"
               value={channelName}
-             onChange={handleInputChange}
+              onChange={handleInputChange}
               placeholder=""
               required
               disabled={isSubmitting}
               className={`mb-2 form-control ${validationError ? 'is-invalid' : ''}`}
-            />  
+            />
             {validationError && (
               <div className="invalid-feedback" style={{ display: 'block' }}>
                 {validationError}
@@ -115,7 +113,7 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
         </Modal.Footer>
       </Form>
     </Modal>
-  );
-};
+  )
+}
 
-export default ReNameChannelModal;
+export default ReNameChannelModal

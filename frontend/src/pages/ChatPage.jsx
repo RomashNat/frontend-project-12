@@ -1,160 +1,146 @@
-import { useEffect, useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Nav } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import { fetchChannels, setCurrentChannel } from '../slices/channelSlice';
-import { fetchMessages, addMessage } from '../slices/messageSlice.jsx';
-import { onNewMessage, removeMessageListener, connectSocket } from '../socket';
-import MessageForm from '../components/MessageForm.jsx';
-import AddChannelModal from '../components/AddChannelModal.jsx';
-import RemoveChannelModal from '../components/RemoveChannelModal.jsx';
-import ReNameChannelModal from '../components/ReNameChannelModal.jsx';
-import ChannelDropdown from '../components/ChannelDropdown.jsx';
+import { useEffect, useState, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { Nav } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import { fetchChannels, setCurrentChannel } from '../slices/channelSlice'
+import { fetchMessages, addMessage } from '../slices/messageSlice.jsx'
+import { onNewMessage, removeMessageListener, connectSocket } from '../socket'
+import MessageForm from '../components/MessageForm.jsx'
+import AddChannelModal from '../components/AddChannelModal.jsx'
+import RemoveChannelModal from '../components/RemoveChannelModal.jsx'
+import ReNameChannelModal from '../components/ReNameChannelModal.jsx'
+import ChannelDropdown from '../components/ChannelDropdown.jsx'
 
 const ChatPage = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { t } = useTranslation();
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const decodeHTML = (html) => {
-    const txt = document.createElement('textarea');
-    txt.innerHTML = html;
-    return txt.value;
-  };
+    const txt = document.createElement('textarea')
+    txt.innerHTML = html
+    return txt.value
+  }
 
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showRemoveModal, setShowRemoveModal] = useState(false);
-  const [showRenameModal, setShowRenameModal] = useState(false);
-  const [selectedChannelId, setSelectedChannelId] = useState(null);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showRemoveModal, setShowRemoveModal] = useState(false)
+  const [showRenameModal, setShowRenameModal] = useState(false)
+  const [selectedChannelId, setSelectedChannelId] = useState(null)
 
-  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-  const { channels, currentChannelId, loading } = useSelector(state => state.channels);
-  const { messages } = useSelector(state => state.messages);
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
+  const { channels, currentChannelId, loading } = useSelector(state => state.channels)
+  const { messages } = useSelector(state => state.messages)
 
-  const currentChannel = channels.find(channel => channel.id === currentChannelId);
-  const channelMessages = messages.filter(message => message.channelId === currentChannelId);
+  const currentChannel = channels.find(channel => channel.id === currentChannelId)
+  const channelMessages = messages.filter(message => message.channelId === currentChannelId)
 
   // Разделяем каналы на системные и пользовательские
-  // Используем removable флаг для определения системных каналов
   const systemChannels = channels.filter(channel =>
     channel.name === 'general' || channel.name === 'random' || channel.removable === false
-  );
+  )
   const userChannels = channels.filter(channel =>
     channel.name !== 'general' && channel.name !== 'random' && channel.removable !== false
-  );
+  )
 
-  console.log('All channels:', channels);
-  console.log('System channels:', systemChannels);
-  console.log('User channels:', userChannels);
-  console.log('Loading channels:', loading);
+  console.log('All channels:', channels)
+  console.log('System channels:', systemChannels)
+  console.log('User channels:', userChannels)
+  console.log('Loading channels:', loading)
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login');
-      return;
+      navigate('/login')
+      return
     }
 
-    connectSocket();
+    connectSocket()
 
     // Загружаем каналы и сообщения
     dispatch(fetchChannels())
       .unwrap()
       .catch(error => {
-        console.error('Failed to load channels:', error);
+        console.error('Failed to load channels:', error)
         if (error?.status === 401) {
           // Если 401 - перенаправляем на логин
-          localStorage.removeItem('token');
-          localStorage.removeItem('username');
-          navigate('/login');
+          localStorage.removeItem('token')
+          localStorage.removeItem('username')
+          navigate('/login')
         }
-      });
+      })
 
-    dispatch(fetchMessages());
+    dispatch(fetchMessages())
 
     return () => {
-      removeMessageListener();
-    };
-  }, [isAuthenticated, navigate, dispatch]);
+      removeMessageListener()
+    }
+  }, [isAuthenticated, navigate, dispatch])
 
   // WebSocket слушатель
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) return
 
     const handleNewMessage = (newMessage) => {
-      console.log('New message received via WebSocket:', newMessage);
+      console.log('New message received via WebSocket:', newMessage)
       const cleanMessage = {
         ...newMessage,
-        body: newMessage.body.startsWith(': ') ? newMessage.body.slice(2) : newMessage.body
-      };
-      dispatch(addMessage(cleanMessage));
-    };
+        body: newMessage.body.startsWith(': ') ? newMessage.body.slice(2) : newMessage.body,
+      }
+      dispatch(addMessage(cleanMessage))
+    }
 
-    onNewMessage(handleNewMessage);
+    onNewMessage(handleNewMessage)
 
     return () => {
-      removeMessageListener();
-    };
-  }, [isAuthenticated, dispatch]);
-
-  // Автоматически выбираем канал general при первой загрузке
-  useEffect(() => {
-    if (channels.length > 0 && !currentChannelId && isDataLoaded) {
-      const generalChannel = channels.find(channel => channel.name === 'general');
-      if (generalChannel) {
-        dispatch(setCurrentChannel(generalChannel.id));
-      } else if (channels.length > 0) {
-        dispatch(setCurrentChannel(channels[0].id));
-      }
+      removeMessageListener()
     }
-  }, [channels, currentChannelId, isDataLoaded, dispatch]);
+  }, [isAuthenticated, dispatch])
 
-    const messagesContainerRef = useRef(null);
+  const messagesContainerRef = useRef(null)
 
   // Автоматический скролл к новым сообщениям
   useEffect(() => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
     }
-  }, [channelMessages]);
+  }, [channelMessages])
 
   const handleChannelSelect = (channelId) => {
-    dispatch(setCurrentChannel(channelId));
-  };
+    dispatch(setCurrentChannel(channelId))
+  }
 
   const handleAddChannel = () => {
-    setShowAddModal(true);
-  };
+    setShowAddModal(true)
+  }
 
   const handleRenameChannel = (channelId) => {
-    setSelectedChannelId(channelId);
-    setShowRenameModal(true);
-  };
+    setSelectedChannelId(channelId)
+    setShowRenameModal(true)
+  }
 
   const handleRemoveChannel = (channelId) => {
-    setSelectedChannelId(channelId);
-    setShowRemoveModal(true);
-  };
+    setSelectedChannelId(channelId)
+    setShowRemoveModal(true)
+  }
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    navigate('/login');
-  };
+    localStorage.removeItem('token')
+    localStorage.removeItem('username')
+    navigate('/login')
+  }
 
   const getMessagesCountText = (count) => {
     if (count % 10 === 1 && count % 100 !== 11) {
-      return t('chat.messagesCount_0', { count });
+      return t('chat.messagesCount_0', { count })
     }
     if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
-      return t('chat.messagesCount_1', { count });
+      return t('chat.messagesCount_1', { count })
     }
-    return t('chat.messagesCount_2', { count });
-  };
+    return t('chat.messagesCount_2', { count })
+  }
 
   if (!isAuthenticated) {
-    return null;
+    return null
   }
 
   // Показываем индикатор загрузки только если данные еще загружаются
@@ -165,7 +151,7 @@ const ChatPage = () => {
           <span className="visually-hidden">Загрузка каналов...</span>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -173,7 +159,11 @@ const ChatPage = () => {
       <Nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
         <div className="container">
           <a className="navbar-brand" href="/">{t('mainHeader.hexletChat')}</a>
-          <button type="button" className="btn btn-primary" onClick={handleLogout}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleLogout}
+          >
             {t('mainHeader.signOut')}
           </button>
         </div>
@@ -224,7 +214,7 @@ const ChatPage = () => {
                       className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-secondary' : ''}`}
                       style={{
                         borderTopRightRadius: 0,
-                        borderBottomRightRadius: 0
+                        borderBottomRightRadius: 0,
                       }}
                       onClick={() => handleChannelSelect(channel.id)}
                     >
@@ -259,7 +249,11 @@ const ChatPage = () => {
               {/* Заголовок канала */}
               <div className="bg-light mb-4 p-3 shadow-sm small">
                 <p className="m-0">
-                  <b># {currentChannel?.name || t('chat.noFoundChannel')}</b>
+                  <b>
+                    #
+                    {' '}
+                    {currentChannel?.name || t('chat.noFoundChannel')}
+                  </b>
                 </p>
                 <span className="text-muted">
                   {getMessagesCountText(channelMessages.length)}
@@ -267,24 +261,30 @@ const ChatPage = () => {
               </div>
 
               {/* Область сообщений */}
-              <div className="chat-messages overflow-auto px-5 flex-grow-1"
-              ref={messagesContainerRef}>
-                {channelMessages.length > 0 ? (
-                  channelMessages
+              <div
+                className="chat-messages overflow-auto px-5 flex-grow-1"
+                ref={messagesContainerRef}
+              >
+                {channelMessages.length > 0
+                  ? channelMessages
                     .filter((message, index, array) =>
                       array.findIndex(m => m.id === message.id) === index
                     )
                     .map(message => (
                       <div key={message.id} className="message mb-3">
-                        <strong>{message.username}: </strong>
+                        <strong>
+                          {message.username}
+                          :
+                          {' '}
+                        </strong>
                         {decodeHTML(message.body)}
                       </div>
                     ))
-                ) : (
-                  <div className="text-center text-muted mt-5">
-                    {t('chat.zeroMessages')}
-                  </div>
-                )}
+                  : (
+                    <div className="text-center text-muted mt-5">
+                      {t('chat.zeroMessages')}
+                    </div>
+                  )}
               </div>
               <MessageForm />
             </div>
@@ -310,7 +310,7 @@ const ChatPage = () => {
         channelId={selectedChannelId}
       />
     </div>
-  );
-};
+  )
+}
 
-export default ChatPage;
+export default ChatPage
