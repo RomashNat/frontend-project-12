@@ -28,7 +28,7 @@ const MessageForm = () => {
       })).unwrap()
       setMessage('') // Очищаем поле после отправки
     }
-    catch (error) {
+    catch {
     }
   }
 

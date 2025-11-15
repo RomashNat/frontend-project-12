@@ -29,18 +29,18 @@ export const connectSocket = () => {
     socket.on('connect', () => {
     })
 
-    socket.on('disconnect', (reason) => {
+    socket.on('disconnect', () => {
     })
 
-    socket.on('connect_error', (error) => {
+    socket.on('connect_error', () => {
     })
 
-    socket.on('error', (error) => {
+    socket.on('error', () => {
     })
 
     return socket
   }
-  catch (error) {
+  catch {
     return null
   }
 }
@@ -55,8 +55,6 @@ export const disconnectSocket = () => {
 export const onNewMessage = (callback) => {
   if (socket) {
     socket.on('newMessage', callback)
-  }
-  else {
   }
 }
 
