@@ -3,8 +3,8 @@ import { Modal, Button, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { renameChannel } from '../store/slices/channelSlice.jsx'
 import { useTranslation } from 'react-i18next'
-import { hasProfanity } from '../utils/wordsfilter.js'
 import { toast } from 'react-toastify'
+import { validateChannelName } from '../validation/validators.js'
 
 const ReNameChannelModal = ({ show, onHide, channelId }) => {
   const [channelName, setChannelName] = useState('')
@@ -32,22 +32,9 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
     if (!name || !channel) return
 
     // Проверка на уникальность имени (исключая текущий канал)
-    const isNameUnique = !channels.some(ch =>
-      ch.id !== channelId && ch.name.toLowerCase() === name.toLowerCase(),
-    )
-
-    if (!isNameUnique) {
-      setValidationError(t('modal.error.notOneOf'))
-      return
-    }
-
-    if (name.length < 3 || name.length > 20) {
-      setValidationError(t('modal.error.length'))
-      return
-    }
-
-    if (hasProfanity(name)) {
-      setValidationError(t('modal.error.profanity'))
+     const error = validateChannelName(name, channels, channelId)
+    if (error) {
+      setValidationError(t(`modal.error.${getErrorKey(error)}`))
       return
     }
 
@@ -75,6 +62,17 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
   const handleInputChange = (e) => {
     setChannelName(e.target.value)
     setValidationError('')
+  }
+
+  // Вспомогательная функция для получения ключа ошибки
+  const getErrorKey = (error) => {
+    const errorMap = {
+      'Обязательное поле': 'required',
+      'От 3 до 20 символов': 'length', 
+      'Канал с таким именем уже существует': 'notOneOf',
+      'Недопустимое название': 'profanity'
+    }
+    return errorMap[error] || 'required'
   }
 
   return (

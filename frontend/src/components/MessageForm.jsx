@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { sendMessage } from '../store/slices/messageSlice.jsx'
 import { filterProfanity } from '../utils/wordsfilter.js'
+import { validateMessage } from '../validation/validators.js'
 
 const MessageForm = () => {
   const [message, setMessage] = useState('')
@@ -17,7 +18,9 @@ const MessageForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!message.trim()) return
+    if (validateMessage(message)) {
+      return
+    }
 
     try {
       const filteredMessage = filterProfanity(message.trim())
@@ -32,7 +35,7 @@ const MessageForm = () => {
       // Ошибка отправки сообщения - можно добавить обработку при необходимости
     }
   }
-
+  
   return (
     <div className="mt-auto px-5 py-3">
       <form onSubmit={handleSubmit} className="py-1 border rounded-2">

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { showError } from '../utils/notifications.js'
 import { filterProfanity } from '../utils/wordsfilter.js'
 import { toast } from 'react-toastify'
+import { validateChannelNameForCreation } from '../validation/validators.js'
 
 const AddChannelModal = ({ show, onHide }) => {
   const [channelName, setChannelName] = useState('')
@@ -17,29 +18,13 @@ const AddChannelModal = ({ show, onHide }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    let name = channelName.trim()
+    const name = channelName.trim()
     setValidationError('')
 
-    if (!name) {
-      setValidationError(t('modal.error.required'))
-      return
-    }
-
-    // Применяем цензуру к имени для проверки уникальности
-    const censoredName = filterProfanity(name)
-
-    // Проверка на уникальность имени
-    const isNameUnique = !channels.some(channel =>
-      channel.name.toLowerCase() === censoredName.toLowerCase(),
-    )
-
-    if (!isNameUnique) {
-      setValidationError(t('modal.error.notOneOf'))
-      return
-    }
-
-    if (name.length < 3 || name.length > 20) {
-      setValidationError(t('modal.error.length'))
+    // Используем вынесенную валидацию
+    const error = validateChannelNameForCreation(name, channels)
+    if (error) {
+      setValidationError(t(`modal.error.${getErrorKey(error)}`))
       return
     }
 
@@ -47,6 +32,7 @@ const AddChannelModal = ({ show, onHide }) => {
 
     try {
       // Создаем канал с зацензуренным именем
+      const censoredName = filterProfanity(name)
       await dispatch(createChannel(censoredName)).unwrap()
       toast.success(t('toast.addChannel'))
       onHide()
@@ -69,6 +55,16 @@ const AddChannelModal = ({ show, onHide }) => {
   const handleInputChange = (e) => {
     setChannelName(e.target.value)
     setValidationError('')
+  }
+
+  // Вспомогательная функция для получения ключа ошибки
+  const getErrorKey = (error) => {
+    const errorMap = {
+      'Обязательное поле': 'required',
+      'От 3 до 20 символов': 'length', 
+      'Канал с таким именем уже существует': 'notOneOf',
+    }
+    return errorMap[error] || 'required'
   }
 
   return (
