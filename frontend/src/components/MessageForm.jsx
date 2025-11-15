@@ -35,7 +35,7 @@ const MessageForm = () => {
       // Ошибка отправки сообщения - можно добавить обработку при необходимости
     }
   }
-  
+
   return (
     <div className="mt-auto px-5 py-3">
       <form onSubmit={handleSubmit} className="py-1 border rounded-2">

@@ -61,7 +61,7 @@ const AddChannelModal = ({ show, onHide }) => {
   const getErrorKey = (error) => {
     const errorMap = {
       'Обязательное поле': 'required',
-      'От 3 до 20 символов': 'length', 
+      'От 3 до 20 символов': 'length',
       'Канал с таким именем уже существует': 'notOneOf',
     }
     return errorMap[error] || 'required'

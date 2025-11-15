@@ -32,7 +32,7 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
     if (!name || !channel) return
 
     // Проверка на уникальность имени (исключая текущий канал)
-     const error = validateChannelName(name, channels, channelId)
+    const error = validateChannelName(name, channels, channelId)
     if (error) {
       setValidationError(t(`modal.error.${getErrorKey(error)}`))
       return
@@ -68,9 +68,9 @@ const ReNameChannelModal = ({ show, onHide, channelId }) => {
   const getErrorKey = (error) => {
     const errorMap = {
       'Обязательное поле': 'required',
-      'От 3 до 20 символов': 'length', 
+      'От 3 до 20 символов': 'length',
       'Канал с таким именем уже существует': 'notOneOf',
-      'Недопустимое название': 'profanity'
+      'Недопустимое название': 'profanity',
     }
     return errorMap[error] || 'required'
   }
