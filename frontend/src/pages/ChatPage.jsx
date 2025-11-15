@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Nav } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-import { fetchChannels, setCurrentChannel } from '../slices/channelSlice'
-import { fetchMessages, addMessage } from '../slices/messageSlice.jsx'
+import { fetchChannels, setCurrentChannel } from '../store/slices/channelSlice'
+import { fetchMessages, addMessage } from '../store/slices/messageSlice.jsx'
 import { onNewMessage, removeMessageListener, connectSocket } from '../socket'
 import MessageForm from '../components/MessageForm.jsx'
 import AddChannelModal from '../components/AddChannelModal.jsx'
@@ -43,11 +43,6 @@ const ChatPage = () => {
     channel.name !== 'general' && channel.name !== 'random' && channel.removable !== false,
   )
 
-  console.log('All channels:', channels)
-  console.log('System channels:', systemChannels)
-  console.log('User channels:', userChannels)
-  console.log('Loading channels:', loading)
-
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login')
@@ -81,7 +76,6 @@ const ChatPage = () => {
     if (!isAuthenticated) return
 
     const handleNewMessage = (newMessage) => {
-      console.log('New message received via WebSocket:', newMessage)
       const cleanMessage = {
         ...newMessage,
         body: newMessage.body.startsWith(': ') ? newMessage.body.slice(2) : newMessage.body,
@@ -264,6 +258,7 @@ const ChatPage = () => {
               <div
                 className="chat-messages overflow-auto px-5 flex-grow-1"
                 ref={messagesContainerRef}
+                style={{ wordWrap: 'break-word' }}
               >
                 {channelMessages.length > 0
                   ? channelMessages

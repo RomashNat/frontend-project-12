@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
-import routes from '../routes.js'
-import { connectSocket } from '../socket'
+import routes from '../../routes.js'
+import { connectSocket } from '../../socket.js'
 
 // Async thunks для логина и регистрации
 export const login = createAsyncThunk(
@@ -13,8 +13,6 @@ export const login = createAsyncThunk(
         password,
       })
       const userData = response.data
-
-      console.log('Login successful, token:', userData.token)
 
       localStorage.setItem('token', userData.token)
       localStorage.setItem('username', userData.username)

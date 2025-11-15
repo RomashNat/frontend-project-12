@@ -2,9 +2,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
-import store from './store.js'
+import store from './store/store.js'
 import i18n from './locales/i18n.js'
-import { ToastContainer } from 'react-toastify'
+import AppToasts from './components/AppToasts.jsx'
 import 'react-toastify/dist/ReactToastify.css'
 import LoginPage from './pages/LoginPage.jsx'
 import ChatPage from './pages/ChatPage.jsx'
@@ -63,18 +63,7 @@ const App = () => {
               element={<Navigate to="/404" replace />}
             />
           </Routes>
-          <ToastContainer
-            position="top-right"
-            autoClose={6000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
+          <AppToasts />
         </BrowserRouter>
       </I18nextProvider>
     </Provider>

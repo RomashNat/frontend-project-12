@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { deleteChannel } from '../slices/channelSlice.jsx'
+import { deleteChannel } from '../store/slices/channelSlice.jsx'
 import { showError } from '../utils/notifications.js'
 import { toast } from 'react-toastify'
 import { Modal, Button, Form } from 'react-bootstrap'

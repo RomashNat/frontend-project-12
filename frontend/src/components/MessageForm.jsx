@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { sendMessage } from '../slices/messageSlice.jsx'
+import { sendMessage } from '../store/slices/messageSlice.jsx'
 import { filterProfanity } from '../utils/wordsfilter.js'
 
 const MessageForm = () => {
@@ -14,8 +14,6 @@ const MessageForm = () => {
     || state.user?.username,
   )
 
-  console.log('Username:', username)
-
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -28,11 +26,9 @@ const MessageForm = () => {
         body: filteredMessage,
         username: username,
       })).unwrap()
-      console.log(username)
       setMessage('') // Очищаем поле после отправки
     }
     catch (error) {
-      console.error('Ошибка отправки сообщения:', error)
     }
   }
 
@@ -41,6 +37,7 @@ const MessageForm = () => {
       <form onSubmit={handleSubmit} className="py-1 border rounded-2">
         <div className="input-group">
           <input
+            autoComplete="off"
             name="body"
             value={message}
             onChange={e => setMessage(e.target.value)}

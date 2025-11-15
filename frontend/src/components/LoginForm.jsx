@@ -2,30 +2,14 @@ import { Formik, Form, Field } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Alert } from 'react-bootstrap'
-import { login } from '../slices/authSlice.jsx'
+import { login } from '../store/slices/authSlice.jsx'
 import { toast } from 'react-toastify'
+import { loginSchema } from '../validation/schemas'
 
 const LoginForm = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { loading } = useSelector(state => state.auth)
-
-  // Функция валидации для проверки полей
-  const validate = (values) => {
-    const errors = {}
-
-    if (!values.username) {
-      errors.username = 'Обязательное поле'
-    }
-    else if (values.username.length < 3) {
-      errors.username = 'Имя пользователя должно содержать минимум 3 символа'
-    }
-
-    if (!values.password) {
-      errors.password = 'Обязательное поле'
-    }
-    return errors
-  }
 
   const handleSubmit = async (values, { setSubmitting, setStatus, setErrors }) => {
     setSubmitting(true)
@@ -69,8 +53,10 @@ const LoginForm = () => {
       <div className="w-100">
         <Formik
           initialValues={{ username: '', password: '' }}
-          validate={validate} // Добавляем валидацию
+          validationSchema={loginSchema} // Добавляем валидацию
           onSubmit={handleSubmit}
+          validateOnChange={true}
+          validateOnBlur={true}
         >
           {({ isSubmitting, errors, touched, status }) => (
             <Form className="col-12">
@@ -90,7 +76,7 @@ const LoginForm = () => {
                   type="text"
                   name="username"
                   placeholder="Введите имя пользователя"
-                  autoComplete="username"
+                  autoComplete="off"
                   required
                   className={`form-control ${(touched.username && errors.username) ? 'is-invalid' : ''}`}
                 />
@@ -109,7 +95,7 @@ const LoginForm = () => {
                   type="password"
                   name="password"
                   placeholder="Введите пароль"
-                  autoComplete="current-password"
+                  autoComplete="off"
                   required
                   className={`form-control ${(touched.password && errors.password) ? 'is-invalid' : ''}`}
                 />

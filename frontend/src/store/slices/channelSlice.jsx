@@ -1,16 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
-import routes from '../routes.js'
+import routes from '../../routes.js'
 
 export const fetchChannels = createAsyncThunk(
   'channels/fetchChannels',
   async () => {
     try {
       const token = localStorage.getItem('token')
-      console.log('Fetching channels with token:', token)
 
       if (!token) {
-        console.log('No token found, using mock channels')
         return [
           { id: 1, name: 'general', removable: false },
           { id: 2, name: 'random', removable: false },
@@ -20,13 +18,10 @@ export const fetchChannels = createAsyncThunk(
       const response = await axios.get(routes.getChannelsPath(), {
         headers: { Authorization: `Bearer ${token}` },
       })
-      console.log('Channels response:', response.data)
       return response.data
     }
     catch (error) {
       console.error('Error fetching channels:', error)
-
-      console.log('Returning mock channels due to error')
       return [
         { id: 1, name: 'general', removable: false },
         { id: 2, name: 'random', removable: false },
@@ -125,7 +120,6 @@ const channelsSlice = createSlice({
 
         // Если каналов нет, создаем системные
         if (action.payload.length === 0) {
-          console.log('Creating default system channels...')
           state.channels = [
             { id: 1, name: 'general', removable: false },
             { id: 2, name: 'random', removable: false },
@@ -155,7 +149,6 @@ const channelsSlice = createSlice({
         state.loading = false
         state.channels.push(action.payload)
         state.currentChannelId = action.payload.id
-        console.log('Channel added to state:', action.payload)
       })
       .addCase(createChannel.rejected, (state, action) => {
         state.loading = false

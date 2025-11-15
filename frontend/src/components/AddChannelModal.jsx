@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { createChannel } from '../slices/channelSlice.jsx'
+import { createChannel } from '../store/slices/channelSlice.jsx'
 import { useTranslation } from 'react-i18next'
 import { showError } from '../utils/notifications.js'
 import { filterProfanity } from '../utils/wordsfilter.js'

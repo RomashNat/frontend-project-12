@@ -7,7 +7,6 @@ export const connectSocket = () => {
 
   // Если нет токена, не подключаемся
   if (!token) {
-    console.log('No token available for socket connection')
     return null
   }
 
@@ -28,25 +27,20 @@ export const connectSocket = () => {
 
     // Добавьте обработчики событий для отладки
     socket.on('connect', () => {
-      console.log('Socket connected:', socket.id)
     })
 
     socket.on('disconnect', (reason) => {
-      console.log('Socket disconnected:', reason)
     })
 
     socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error)
     })
 
     socket.on('error', (error) => {
-      console.error('Socket error:', error)
     })
 
     return socket
   }
   catch (error) {
-    console.error('Failed to create socket connection:', error)
     return null
   }
 }
@@ -63,7 +57,6 @@ export const onNewMessage = (callback) => {
     socket.on('newMessage', callback)
   }
   else {
-    console.warn('Socket not available for message listener')
   }
 }
 

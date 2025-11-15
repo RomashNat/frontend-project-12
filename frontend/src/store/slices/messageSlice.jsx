@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
-import routes from '../routes.js'
-import { removeMessageListener, connectSocket, joinChannel, leaveChannel } from '../socket'
-import { filterProfanity } from '../utils/wordsfilter.js'
+import routes from '../../routes.js'
+import { removeMessageListener, connectSocket, joinChannel, leaveChannel } from '../../socket.js'
+import { filterProfanity } from '../../utils/wordsfilter.js'
 
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',
@@ -42,8 +42,6 @@ export const sendMessage = createAsyncThunk(
       }, {
         headers: { Authorization: `Bearer ${token}` },
       })
-
-      console.log('Message sent successfully:', response.data)
 
       // Чистим сообщение от двоеточия если оно есть
       const cleanMessage = {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { renameChannel } from '../slices/channelSlice.jsx'
+import { renameChannel } from '../store/slices/channelSlice.jsx'
 import { useTranslation } from 'react-i18next'
 import { hasProfanity } from '../utils/wordsfilter.js'
 import { toast } from 'react-toastify'

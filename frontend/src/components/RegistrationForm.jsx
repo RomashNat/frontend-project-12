@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import * as Yup from 'yup'
 import { Formik, Form, Field } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Alert } from 'react-bootstrap'
-import { signup } from '../slices/authSlice'
+import { signup } from '../store/slices/authSlice.jsx'
 import { toast } from 'react-toastify'
+import { registrationSchema } from '../validation/schemas.js'
 
 const RegistrationForm = () => {
   const navigate = useNavigate()
@@ -14,22 +14,6 @@ const RegistrationForm = () => {
 
   const [isUsernameTaken, setUsernameTaken] = useState(false)
   const [serverError, setServerError] = useState('')
-
-  const validationSchema = Yup.object().shape({
-    username: Yup.string()
-      .trim()
-      .required('Обязательное поле')
-      .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов'),
-    password: Yup.string()
-      .trim()
-      .required('Обязательное поле')
-      .min(6, 'Не менее 6 символов'),
-    confirmPassword: Yup.string()
-      .trim()
-      .required('Обязательное поле')
-      .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать'),
-  })
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     setSubmitting(true)
@@ -47,7 +31,6 @@ const RegistrationForm = () => {
       if (result && result.token) {
         toast.success('Регистрация выполнена успешно')
         resetForm()
-        // Добавляем небольшую задержку перед навигацией
         setTimeout(() => {
           navigate('/')
         }, 100)
@@ -58,7 +41,6 @@ const RegistrationForm = () => {
 
       if (error?.status === 409) {
         setUsernameTaken(true)
-        // toast.error('Такой пользователь уже существует')
       }
       else if (error?.status === 400) {
         setServerError('Некорректные данные для регистрации')
@@ -82,7 +64,7 @@ const RegistrationForm = () => {
         password: '',
         confirmPassword: '',
       }}
-      validationSchema={validationSchema}
+      validationSchema={registrationSchema}
       onSubmit={handleSubmit}
       validateOnChange={true}
       validateOnBlur={true}
@@ -147,7 +129,7 @@ const RegistrationForm = () => {
             <Field
               type="password"
               name="confirmPassword"
-              autoComplete="new-password"
+              autoComplete="off"
               required
               placeholder="Пароли должны совпадать"
               id="confirmPassword"
