@@ -60,7 +60,7 @@ https://frontend-project-12-a32o.onrender.com
 - AddChannel page:
   <img width="1914" height="896" alt="AddChannel" src="https://github.com/user-attachments/assets/0a9c301e-1d03-404e-a599-ad02f3c3d812" />
 
--DeleteChannel page:
+- DeleteChannel page:
 <img width="1920" height="870" alt="DeleteChannel" src="https://github.com/user-attachments/assets/0ae3b71c-3658-4a3b-b480-49381e516ad9" />
 
 
