@@ -49,7 +49,7 @@ https://frontend-project-12-a32o.onrender.com
 ### Visual presentation:
 
 - Login page:
-  ![Uploading LoginPage.PNG…]()
+<img width="1915" height="869" alt="LoginPage" src="https://github.com/user-attachments/assets/c475280c-4839-4962-9a42-067b5361773f" />
 
 - Registration page:
   <img width="1904" height="849" alt="RegistrationFormк" src="https://github.com/user-attachments/assets/200df99f-a454-4fa2-8153-26c4a5c29559" />
